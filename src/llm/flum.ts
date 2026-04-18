@@ -213,6 +213,10 @@ export interface FlumComputeRequest {
 export async function compute(request: FlumComputeRequest): Promise<FlumResponse> {
   const startTime = Date.now();
 
+  // Enrich params with sensor data if requested
+  const sensorSources: SensorSource[] = (request.params.sensor_sources as SensorSource[]) ?? ["manual_entry"];
+  const sensorConfidence = sensorSources.includes("manual_entry") ? 1 : 0.95;
+
   try {
     // Route to the correct tool's compute function
     let response: FlumResponse;
@@ -222,7 +226,7 @@ export async function compute(request: FlumComputeRequest): Promise<FlumResponse
         response = await computeSlope(request);
         break;
       case "pipe_sizer":
-        response = await computePipeSizer(request);
+        response = await handlePipeSizer(request);
         break;
       case "fixture_counter":
         response = await computeFixtureCounter(request);
@@ -287,9 +291,16 @@ export async function compute(request: FlumComputeRequest): Promise<FlumResponse
         );
     }
 
-    // Fill in latency
+    // Fill in latency and sensor metadata
     if (response.metadata) {
       response.metadata.latency_ms = Date.now() - startTime;
+      response.metadata.sensor_sources = sensorSources;
+      // Blend calculation confidence with sensor confidence
+      response.metadata.confidence = Math.min(
+        response.metadata.confidence,
+        sensorConfidence,
+      );
+      response.metadata.requires_human_confirmation = response.metadata.confidence < 0.95;
     }
 
     return response;
@@ -308,6 +319,9 @@ export async function compute(request: FlumComputeRequest): Promise<FlumResponse
 
 import { computeSurvey, classifySlope, validate } from "../slope/calc";
 import type { Survey, Units } from "../slope/types";
+import { computePipeSizer } from "../tools/pipe-sizer/calc";
+import type { PipeSizerInput } from "../tools/pipe-sizer/calc";
+import { type SensorSource } from "../sensors";
 
 async function computeSlope(
   request: FlumComputeRequest,
@@ -416,15 +430,58 @@ async function computeSlope(
   );
 }
 
-// Placeholder imports for tools not yet implemented
-async function computePipeSizer(
-  _request: FlumComputeRequest,
+async function handlePipeSizer(
+  request: FlumComputeRequest,
 ): Promise<FlumResponse> {
-  // Will be implemented when PipeSizerPage is built
-  return flumError(
-    "Pipe sizer computation is not yet implemented.",
-    "The pipe sizer page is available for manual use.",
-    ["slope"],
+  const { action, params } = request;
+
+  if (action !== "compute" && action !== "size") {
+    return flumError(
+      `Unknown action: ${action}`,
+      "Available actions for pipe_sizer are: 'compute', 'size'.",
+      ["compute", "size"],
+    );
+  }
+
+  const wsfu = params.wsfu as number | undefined;
+  const dfu = params.dfu as number | undefined;
+
+  if (wsfu === undefined || dfu === undefined) {
+    return flumError(
+      "Need at least WSFU (water supply fixture units) and DFU (drainage fixture units) to size pipes.",
+      "Provide 'wsfu' and 'dfu' parameters. Example: { wsfu: 12, dfu: 6, longest_run_ft: 60, elevation_rise_ft: 10, code: 'ipc-2021', stories: 2 }",
+      ["compute"],
+    );
+  }
+
+  const input: PipeSizerInput = {
+    wsfu,
+    dfu,
+    vent_fu: params.vent_fu as number | undefined,
+    longest_run_ft: (params.longest_run_ft as number) || 60,
+    elevation_rise_ft: (params.elevation_rise_ft as number) || 0,
+    code: (params.code as "ipc-2021" | "upc-2021") || "ipc-2021",
+    stories: (params.stories as number) || 1,
+    available_pressure_psi: params.available_pressure_psi as number | undefined,
+  };
+
+  const result = computePipeSizer(input);
+
+  const pressureText = result.pressure_ok
+    ? `Residual pressure ${result.residual_pressure_psi} psi — OK (min 20 psi)`
+    : `Residual pressure ${result.residual_pressure_psi} psi — BELOW 20 psi minimum`;
+
+  return flumSuccess(
+    `Pipe sizing: Water service ${result.water_service_size}", Main supply ${result.main_supply_size}", Drain ${result.main_drain_size}", Vent ${result.vent_size}". ${pressureText}.`,
+    result.warnings.length > 0
+      ? result.warnings.join(" | ")
+      : "All sizes meet code requirements.",
+    result,
+    {
+      actions_available: ["compute", "classify", "export_json"],
+      tip: `Code sections: ${result.code_sections.join(", ")}`,
+      confidence: result.confidence,
+    },
   );
 }
 

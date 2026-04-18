@@ -5,6 +5,7 @@ import { parseIntent, compute, type FlumResponse, type ToolId } from "../llm";
 
 // Tool page imports — lazy loaded in production build
 import { SlopeCalculator } from "../slope";
+import { PipeSizerPage } from "../tools/pipe-sizer/PipeSizerPage";
 
 const TOOLS: { id: ToolId; label: string; icon: string; value: string; description: string }[] = [
   { id: "slope", label: "Slope Calculator", icon: "📐", value: "11.4%", description: "Sonde-and-grade lateral slope survey with code verdict" },
@@ -139,7 +140,7 @@ function ToolPage({ toolId, onIntent }: ToolPageProps) {
   const tool = TOOLS.find((t) => t.id === toolId);
   if (!tool) return <div>Tool not found</div>;
 
-  // Slope calculator is the only fully implemented tool right now
+  // Fully implemented tools with form UI
   if (toolId === "slope") {
     return (
       <div>
@@ -155,6 +156,21 @@ function ToolPage({ toolId, onIntent }: ToolPageProps) {
           initialUnits="imperial"
           pipeDiameterIn={4}
         />
+      </div>
+    );
+  }
+
+  if (toolId === "pipe_sizer") {
+    return (
+      <div>
+        <div className="psi-app__section">
+          <h2 className="psi-app__section-title">{tool.icon} {tool.label}</h2>
+          <p style={{ fontSize: 14, color: "var(--psi-ink-soft)", margin: "0 0 16px 0" }}>
+            {tool.description} · <strong>Value: {tool.value}</strong> of standard day
+          </p>
+          <PsiChat onIntent={onIntent} toolId={toolId} autoFocus />
+        </div>
+        <PipeSizerPage />
       </div>
     );
   }
