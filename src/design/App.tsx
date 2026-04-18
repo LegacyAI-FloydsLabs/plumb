@@ -88,7 +88,15 @@ export function App() {
 
         {/* Mobile overlay */}
         {navOpen && (
-          <div className="psi-app__overlay psi-app__overlay--visible" onClick={() => setNavOpen(false)} />
+          <div
+            className="psi-app__overlay psi-app__overlay--visible"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Navigation menu"
+            tabIndex={-1}
+            onClick={() => setNavOpen(false)}
+            onKeyDown={(e) => { if (e.key === "Escape") setNavOpen(false); }}
+          />
         )}
 
         <nav className={`psi-app__nav ${navOpen ? "psi-app__nav--open" : ""}`}>

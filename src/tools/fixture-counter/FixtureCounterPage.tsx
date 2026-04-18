@@ -68,7 +68,7 @@ export function FixtureCounterPage() {
       </button>
 
       {result && (
-        <div style={{ border: "1px solid var(--psi-border, #e2e8f0)", borderRadius: 10, padding: 20, background: "var(--psi-surface, #f8fafc)" }}>
+        <div aria-live="polite" style={{ border: "1px solid var(--psi-border, #e2e8f0)", borderRadius: 10, padding: 20, background: "var(--psi-surface, #f8fafc)" }}>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 16 }}>
             <div style={{ textAlign: "center", padding: 16, background: "var(--psi-paper, #fff)", borderRadius: 8, border: "1px solid var(--psi-border, #e2e8f0)" }}>
               <div style={{ fontSize: 28, fontWeight: 700, color: "var(--psi-p900, #0c4a6e)" }}>{result.total_dfu}</div>

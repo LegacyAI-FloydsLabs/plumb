@@ -44,7 +44,7 @@ export function HydraulicAnalyzerPage() {
       <button className="psi-slope__btn psi-slope__btn--primary" onClick={handleCompute} style={{ width: "100%", padding: 14, marginBottom: 24 }}>Analyze</button>
 
       {result && (
-        <div style={{ border: "1px solid var(--psi-border, #e2e8f0)", borderRadius: 10, padding: 20, background: "var(--psi-surface, #f8fafc)" }}>
+        <div aria-live="polite" style={{ border: "1px solid var(--psi-border, #e2e8f0)", borderRadius: 10, padding: 20, background: "var(--psi-surface, #f8fafc)" }}>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 12, marginBottom: 16 }}>
             {[
               { label: "Velocity", value: `${result.velocity_fps} ft/s`, ok: result.velocity_ok },

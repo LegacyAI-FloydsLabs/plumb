@@ -54,11 +54,11 @@ export function BidGeneratorPage() {
         <h2 className="psi-slope__section-title" style={{ fontSize: 14 }}>Tasks</h2>
         <div style={{ display: "grid", gap: 4 }}>
           {Object.entries(TASK_TIMES).map(([key, task]) => (
-            <div key={key} onClick={() => toggleTask(key)} style={{ display: "flex", alignItems: "center", gap: 8, padding: "6px 12px", borderRadius: 6, cursor: "pointer", background: selectedTasks.has(key) ? "var(--psi-p100, #dbeafe)" : "transparent", border: selectedTasks.has(key) ? "1px solid var(--psi-accent, #0ea5e9)" : "1px solid transparent" }}>
+            <button key={key} onClick={() => toggleTask(key)} type="button" aria-pressed={selectedTasks.has(key)} style={{ display: "flex", alignItems: "center", gap: 8, padding: "6px 12px", borderRadius: 6, cursor: "pointer", background: selectedTasks.has(key) ? "var(--psi-p100, #dbeafe)" : "transparent", border: selectedTasks.has(key) ? "1px solid var(--psi-accent, #0ea5e9)" : "1px solid transparent", textAlign: "left", width: "100%", font: "inherit", color: "inherit" }}>
               <span style={{ fontSize: 14 }}>{selectedTasks.has(key) ? "☑" : "☐"}</span>
               <span style={{ fontSize: 13, flex: 1 }}>{task.description}</span>
               <span style={{ fontSize: 11, color: "var(--psi-ink-soft, #475569)" }}>{task.hours} hr</span>
-            </div>
+            </button>
           ))}
         </div>
       </section>
@@ -90,7 +90,7 @@ export function BidGeneratorPage() {
       </button>
 
       {result && (
-        <div style={{ border: "1px solid var(--psi-border, #e2e8f0)", borderRadius: 10, padding: 20, background: "var(--psi-surface, #f8fafc)" }}>
+        <div aria-live="polite" style={{ border: "1px solid var(--psi-border, #e2e8f0)", borderRadius: 10, padding: 20, background: "var(--psi-surface, #f8fafc)" }}>
           <div style={{ textAlign: "center", padding: 20, background: "var(--psi-p900, #0c4a6e)", borderRadius: 8, marginBottom: 16 }}>
             <div style={{ fontSize: 36, fontWeight: 700, color: "#fff" }}>${result.grand_total.toFixed(2)}</div>
             <div style={{ fontSize: 13, color: "rgba(255,255,255,.7)" }}>Grand Total</div>

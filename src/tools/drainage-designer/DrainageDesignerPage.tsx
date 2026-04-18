@@ -28,7 +28,7 @@ export function DrainageDesignerPage() {
       <button className="psi-slope__btn psi-slope__btn--primary" onClick={handleCompute} style={{ width: "100%", padding: 14, marginBottom: 24 }}>Design Drainage</button>
 
       {result && (
-        <div style={{ border: "1px solid var(--psi-border, #e2e8f0)", borderRadius: 10, padding: 20, background: "var(--psi-surface, #f8fafc)" }}>
+        <div aria-live="polite" style={{ border: "1px solid var(--psi-border, #e2e8f0)", borderRadius: 10, padding: 20, background: "var(--psi-surface, #f8fafc)" }}>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 12, marginBottom: 16 }}>
             <div style={{ textAlign: "center", padding: 16, background: "var(--psi-paper, #fff)", borderRadius: 8, border: "1px solid var(--psi-border, #e2e8f0)" }}><div style={{ fontSize: 24, fontWeight: 700, color: "var(--psi-p900, #0c4a6e)" }}>{result.stack_size}"</div><div style={{ fontSize: 11, color: "var(--psi-ink-soft, #475569)" }}>Stack Size</div></div>
             <div style={{ textAlign: "center", padding: 16, background: "var(--psi-paper, #fff)", borderRadius: 8, border: "1px solid var(--psi-border, #e2e8f0)" }}><div style={{ fontSize: 24, fontWeight: 700, color: "var(--psi-p900, #0c4a6e)" }}>{result.cleanout_count}</div><div style={{ fontSize: 11, color: "var(--psi-ink-soft, #475569)" }}>Cleanouts ({result.cleanout_spacing_ft} ft)</div></div>

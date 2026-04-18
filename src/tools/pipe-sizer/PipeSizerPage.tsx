@@ -165,6 +165,7 @@ export function PipeSizerPage() {
       {/* ── Error ─────────────────────────────────────────────────── */}
       {error && (
         <div
+          role="alert"
           style={{
             background: "var(--psi-bad-bg, #fef2f2)",
             color: "var(--psi-bad, #dc2626)",
@@ -219,6 +220,7 @@ function SizerResultCard({ result }: { result: PipeSizerOutput }) {
 
   return (
     <div
+      aria-live="polite"
       style={{
         border: "1px solid var(--psi-border, #e2e8f0)",
         borderRadius: "var(--psi-radius-lg, 12px)",

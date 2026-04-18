@@ -47,7 +47,7 @@ export function AdaCompliancePage() {
       </button>
 
       {result && (
-        <div style={{ border: "1px solid var(--psi-border, #e2e8f0)", borderRadius: 10, padding: 20, background: "var(--psi-surface, #f8fafc)" }}>
+        <div aria-live="polite" style={{ border: "1px solid var(--psi-border, #e2e8f0)", borderRadius: 10, padding: 20, background: "var(--psi-surface, #f8fafc)" }}>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 12, marginBottom: 16 }}>
             <div style={{ textAlign: "center", padding: 12, background: "var(--psi-good-bg, #f0fdf4)", borderRadius: 8 }}><div style={{ fontSize: 20, fontWeight: 700, color: "var(--psi-good, #16a34a)" }}>{result.passed}</div><div style={{ fontSize: 11 }}>Passed</div></div>
             <div style={{ textAlign: "center", padding: 12, background: result.failed > 0 ? "var(--psi-bad-bg, #fef2f2)" : "var(--psi-paper, #fff)", borderRadius: 8 }}><div style={{ fontSize: 20, fontWeight: 700, color: result.failed > 0 ? "var(--psi-bad, #dc2626)" : "var(--psi-ink-soft, #475569)" }}>{result.failed}</div><div style={{ fontSize: 11 }}>Failed</div></div>

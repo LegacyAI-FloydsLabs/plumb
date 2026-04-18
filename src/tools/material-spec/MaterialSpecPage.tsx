@@ -34,7 +34,7 @@ export function MaterialSpecPage() {
       <button className="psi-slope__btn psi-slope__btn--primary" onClick={handleCheck} style={{ width: "100%", padding: 14, marginBottom: 24 }}>Check Compatibility</button>
 
       {result && (
-        <div style={{ border: "1px solid var(--psi-border, #e2e8f0)", borderRadius: 10, padding: 20, background: "var(--psi-surface, #f8fafc)" }}>
+        <div aria-live="polite" style={{ border: "1px solid var(--psi-border, #e2e8f0)", borderRadius: 10, padding: 20, background: "var(--psi-surface, #f8fafc)" }}>
           <div style={{ padding: "12px 16px", borderRadius: 8, marginBottom: 16, background: result.compatibility.compatible ? "var(--psi-good-bg, #f0fdf4)" : "var(--psi-bad-bg, #fef2f2)", color: result.compatibility.compatible ? "var(--psi-good, #16a34a)" : "var(--psi-bad, #dc2626)", fontWeight: 700, fontSize: 16, textAlign: "center" }}>
             {result.compatibility.compatible ? "✅ Compatible" : "❌ Not Compatible"}
           </div>
