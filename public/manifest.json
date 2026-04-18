@@ -1,0 +1,17 @@
+{
+  "name": "PSI Slope Calculator",
+  "short_name": "PSI Slope",
+  "description": "Field-tech tool for sonde-and-grade slope surveys",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#0369a1",
+  "icons": [
+    {
+      "src": "/hero-legacy.jpg",
+      "sizes": "1214x470",
+      "type": "image/jpeg",
+      "purpose": "any"
+    }
+  ]
+}
