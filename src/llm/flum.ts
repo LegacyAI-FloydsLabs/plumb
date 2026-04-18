@@ -229,65 +229,37 @@ export async function compute(request: FlumComputeRequest): Promise<FlumResponse
         response = await handlePipeSizer(request);
         break;
       case "fixture_counter":
-        response = await computeFixtureCounter(request);
+        response = await handleFixtureCounter(request);
         break;
       case "code_compliance":
-        response = await computeCodeCompliance(request);
+        response = await handleCodeCompliance(request);
         break;
       case "hydraulic_analyzer":
-        response = flumError(
-          "Hydraulic analyzer is not yet available.",
-          "Try the pipe sizer for basic sizing, or use the slope calculator for lateral surveys.",
-          ["pipe_sizer", "slope"],
-        );
+        response = await handleHydraulicAnalyzer(request);
         break;
       case "drainage_designer":
-        response = flumError(
-          "Drainage designer is not yet available.",
-          "Try the pipe sizer for drain sizing, or the fixture counter for load calculations.",
-          ["pipe_sizer", "fixture_counter"],
-        );
+        response = await handleDrainageDesigner(request);
         break;
       case "permit_navigator":
-        response = flumError(
-          "Permit navigator is not yet available.",
-          "Try the code compliance engine for code requirements.",
-          ["code_compliance"],
-        );
+        response = await handlePermitNavigator(request);
         break;
       case "ada_compliance":
-        response = flumError(
-          "ADA compliance scanner is not yet available.",
-          "Try the code compliance engine for general code checks.",
-          ["code_compliance"],
-        );
+        response = await handleAdaCompliance(request);
         break;
       case "material_spec":
-        response = flumError(
-          "Material specification engine is not yet available.",
-          "Try the pipe sizer for material-compatible sizing.",
-          ["pipe_sizer"],
-        );
+        response = await handleMaterialSpec(request);
         break;
       case "backflow_test":
-        response = flumError(
-          "Backflow and test logger is not yet available.",
-          "Try the code compliance engine for backflow prevention requirements.",
-          ["code_compliance"],
-        );
+        response = await handleBackflowTest(request);
         break;
       case "bid_generator":
-        response = flumError(
-          "Bid generator is not yet available.",
-          "Use individual tools to compute values for your bid.",
-          ["slope", "pipe_sizer", "fixture_counter"],
-        );
+        response = await handleBidGenerator(request);
         break;
       default:
         response = flumError(
           `Unknown tool: ${request.tool}`,
-          "Available tools are: slope, pipe_sizer, fixture_counter, code_compliance.",
-          ["slope", "pipe_sizer", "fixture_counter", "code_compliance"],
+          "Available tools: slope, pipe_sizer, fixture_counter, code_compliance, hydraulic_analyzer, drainage_designer, permit_navigator, ada_compliance, material_spec, backflow_test, bid_generator.",
+          ["slope", "pipe_sizer", "fixture_counter"],
         );
     }
 
@@ -321,6 +293,17 @@ import { computeSurvey, classifySlope, validate } from "../slope/calc";
 import type { Survey, Units } from "../slope/types";
 import { computePipeSizer } from "../tools/pipe-sizer/calc";
 import type { PipeSizerInput } from "../tools/pipe-sizer/calc";
+import { countFixtures, FIXTURES as FIXTURE_DB } from "../tools/fixture-counter/calc";
+import { lookupCode } from "../tools/code-compliance/calc";
+import { analyzeHydraulics } from "../tools/hydraulic-analyzer/calc";
+import type { HydraulicInput } from "../tools/hydraulic-analyzer/calc";
+import { designDrainage } from "../tools/drainage-designer/calc";
+import type { DrainageInput } from "../tools/drainage-designer/calc";
+import { navigatePermit } from "../tools/permit-navigator/calc";
+import { checkAdaCompliance } from "../tools/ada-compliance/calc";
+import { checkMaterial } from "../tools/material-spec/calc";
+import { selectBackflowAssembly } from "../tools/backflow-test/calc";
+import { generateBid, MATERIAL_CATALOG, TASK_TIMES } from "../tools/bid-generator/calc";
 import { type SensorSource } from "../sensors";
 
 async function computeSlope(
@@ -485,24 +468,255 @@ async function handlePipeSizer(
   );
 }
 
-async function computeFixtureCounter(
-  _request: FlumComputeRequest,
+async function handleFixtureCounter(
+  request: FlumComputeRequest,
 ): Promise<FlumResponse> {
-  // Will be implemented when FixtureCounterPage is built
-  return flumError(
-    "Fixture counter computation is not yet implemented.",
-    "The fixture counter page is available for manual use.",
-    ["slope"],
+  const { action, params } = request;
+  if (action !== "compute" && action !== "count") {
+    return flumError(`Unknown action: ${action}`, "Available actions: 'compute', 'count'.", ["compute"]);
+  }
+
+  const fixtures = (params.fixtures ?? {}) as Record<string, number>;
+  const bathroomGroups = (params.bathroom_groups as number) ?? 0;
+  const occupancy = (params.occupancy as "private" | "public") ?? "private";
+  const code = (params.code as "ipc-2021" | "upc-2021") ?? "ipc-2021";
+
+  if (Object.keys(fixtures).length === 0 && bathroomGroups === 0) {
+    const available = Object.keys(FIXTURE_DB).join(", ");
+    return flumError(
+      "No fixtures specified.",
+      `Provide a 'fixtures' map of fixture key → count. Available fixtures: ${available}. Or set bathroom_groups for a standard group.`,
+      ["compute"],
+    );
+  }
+
+  const result = countFixtures({ fixtures, bathroom_groups: bathroomGroups, occupancy, code });
+  return flumSuccess(
+    `Total: ${result.total_dfu} DFU, ${result.total_wsfu} WSFU (${result.breakdown.length} line items, ${result.group_reduction > 0 ? `${result.group_reduction} DFU saved by bathroom groups` : "no group reduction"})`,
+    result.warnings.length > 0 ? result.warnings.join(" | ") : "Fixture counts ready for pipe sizing.",
+    result,
+    { actions_available: ["compute", "export_json"], confidence: 0.99 },
   );
 }
 
-async function computeCodeCompliance(
-  _request: FlumComputeRequest,
+async function handleCodeCompliance(
+  request: FlumComputeRequest,
 ): Promise<FlumResponse> {
-  // Will be implemented when CodeCompliancePage is built
-  return flumError(
-    "Code compliance computation is not yet implemented.",
-    "The code compliance page is available for manual use.",
-    ["slope"],
+  const { action, params } = request;
+  const query = (params.query as string) ?? (action !== "compute" ? action : "");
+  if (!query) {
+    return flumError("Need a code query.", "Provide a 'query' parameter like 'trap arm length' or 'vent sizing'.", ["compute"]);
+  }
+
+  const code = (params.code as "ipc-2021" | "upc-2021" | "both") ?? "both";
+  const result = lookupCode({ query, code, category: params.category as string | undefined });
+
+  if (result.total_matches === 0) {
+    return flumError(
+      `No code sections found for "${query}".`,
+      result.warnings.join(" "),
+      result.suggestions.slice(0, 5),
+    );
+  }
+
+  const topResults = result.matches.slice(0, 3).map((s) => `${s.section}: ${s.requirement}`).join("\n");
+  return flumSuccess(
+    `Found ${result.total_matches} matching code section(s). Top result: ${result.matches[0].section} — ${result.matches[0].plain_language}`,
+    topResults,
+    result,
+    { actions_available: ["compute", "export_json"], confidence: 0.95 },
+  );
+}
+
+async function handleHydraulicAnalyzer(
+  request: FlumComputeRequest,
+): Promise<FlumResponse> {
+  const { params } = request;
+  const flowGpm = params.flow_gpm as number | undefined;
+  const pipeSize = params.pipe_size as string | undefined;
+  if (!flowGpm || !pipeSize) {
+    return flumError(
+      "Need flow rate (GPM) and pipe size.",
+      "Provide 'flow_gpm', 'pipe_size', 'material', 'length_ft', and 'static_pressure_psi'.",
+      ["compute"],
+    );
+  }
+
+  const input: HydraulicInput = {
+    material: (params.material as string) ?? "copper",
+    pipe_size: pipeSize,
+    length_ft: (params.length_ft as number) ?? 50,
+    flow_gpm: flowGpm,
+    static_pressure_psi: (params.static_pressure_psi as number) ?? 55,
+    elevation_rise_ft: (params.elevation_rise_ft as number) ?? 0,
+    fittings_count: (params.fittings_count as number) ?? 0,
+  };
+
+  const result = analyzeHydraulics(input);
+  const velocityNote = result.velocity_ok ? "OK" : "OUT OF RANGE";
+  return flumSuccess(
+    `${pipeSize}" ${input.material} at ${flowGpm} GPM: ${result.velocity_fps} ft/s (${velocityNote}), ${result.residual_pressure_psi} psi residual. Friction: ${result.total_friction_loss_psi} psi over ${input.length_ft} ft.`,
+    result.warnings.length > 0 ? result.warnings.join(" | ") : "Hydraulic analysis complete.",
+    result,
+    {
+      actions_available: ["compute", "export_json"],
+      confidence: 0.97,
+      tip: result.recommended_size ? `Consider upsizing to ${result.recommended_size}" pipe.` : undefined,
+    },
+  );
+}
+
+async function handleDrainageDesigner(
+  request: FlumComputeRequest,
+): Promise<FlumResponse> {
+  const { params } = request;
+  const totalFu = params.total_fu as number | undefined;
+  if (!totalFu) {
+    return flumError("Need total fixture units.", "Provide 'total_fu', 'building_drain_size', 'total_run_ft', 'stories', and 'code'.", ["compute"]);
+  }
+
+  const input: DrainageInput = {
+    total_fu: totalFu,
+    building_drain_size: (params.building_drain_size as string) ?? "4",
+    total_run_ft: (params.total_run_ft as number) ?? 100,
+    direction_changes: (params.direction_changes as number) ?? 0,
+    stories: (params.stories as number) ?? 1,
+    code: (params.code as "ipc-2021" | "upc-2021") ?? "ipc-2021",
+  };
+
+  const result = designDrainage(input);
+  return flumSuccess(
+    `Stack: ${result.stack_size}", ${result.cleanout_count} cleanouts (every ${result.cleanout_spacing_ft} ft). Building drain ${input.building_drain_size}" ${result.drain_ok ? "✅ adequate" : "❌ undersized"}.`,
+    result.warnings.length > 0 ? result.warnings.join(" | ") : "Drainage design complete.",
+    result,
+    { actions_available: ["compute", "export_json"], confidence: 0.95 },
+  );
+}
+
+async function handlePermitNavigator(
+  request: FlumComputeRequest,
+): Promise<FlumResponse> {
+  const { params } = request;
+  const description = (params.description as string) ?? (params.query as string) ?? "";
+  if (!description) {
+    return flumError("Need a project description.", "Describe the work: 'bathroom remodel', 'water heater replacement', 'new gas line', etc.", ["compute"]);
+  }
+
+  const result = navigatePermit({
+    description,
+    project_value: params.project_value as number | undefined,
+    occupancy: (params.occupancy as "residential" | "commercial") ?? "residential",
+  });
+
+  const topPermit = result.permits[0];
+  return flumSuccess(
+    `Recommended permit: ${topPermit.name}. Estimated fees: $${result.estimated_fees.low}–$${result.estimated_fees.high}. ${result.required_documents.length} documents required, ${result.inspections.length} inspections.`,
+    result.notes.join(" | "),
+    result,
+    { actions_available: ["compute", "export_json"], confidence: 0.85 },
+  );
+}
+
+async function handleAdaCompliance(
+  request: FlumComputeRequest,
+): Promise<FlumResponse> {
+  const { params } = request;
+  const measurements = (params.measurements ?? {}) as Record<string, number>;
+  if (Object.keys(measurements).length === 0) {
+    return flumError("Need measurements.", "Provide a 'measurements' map of requirement ID → measured value. Example: { wc_centerline: 17, seat_height: 18 }", ["compute"]);
+  }
+
+  const result = checkAdaCompliance({
+    measurements,
+    categories: params.categories as string[] | undefined,
+  });
+
+  return flumSuccess(
+    `ADA compliance: ${result.passed}/${result.total} checks passed (${result.compliance_pct}%). ${result.failed > 0 ? `${result.failed} failures in: ${result.failed_categories.join(", ")}` : "All checks passed!"}`,
+    result.failed > 0 ? "See individual check guidance for remediation steps." : "Fully compliant.",
+    result,
+    { actions_available: ["compute", "export_json"], confidence: 0.99 },
+  );
+}
+
+async function handleMaterialSpec(
+  request: FlumComputeRequest,
+): Promise<FlumResponse> {
+  const { params } = request;
+  const materialA = params.material_a as string | undefined;
+  const materialB = params.material_b as string | undefined;
+  if (!materialA || !materialB) {
+    return flumError("Need two materials to check.", "Provide 'material_a' and 'material_b'. Example: { material_a: 'copper', material_b: 'pex' }", ["compute"]);
+  }
+
+  const result = checkMaterial({
+    material_a: materialA as import("../tools/material-spec/calc").MaterialId,
+    material_b: materialB as import("../tools/material-spec/calc").MaterialId,
+    pipe_size: params.pipe_size as string | undefined,
+    joint_count: params.joint_count as number | undefined,
+  });
+
+  return flumSuccess(
+    `${materialA} → ${materialB}: ${result.compatibility.compatible ? "✅ Compatible" : "❌ Not directly compatible"}. Transition: ${result.compatibility.transition}`,
+    result.compatibility.notes,
+    result,
+    { actions_available: ["compute", "export_json"], confidence: 0.97 },
+  );
+}
+
+async function handleBackflowTest(
+  request: FlumComputeRequest,
+): Promise<FlumResponse> {
+  const { params } = request;
+  const application = (params.application as string) ?? (params.query as string) ?? "";
+  if (!application) {
+    return flumError("Need an application description.", "Describe the application: 'irrigation system', 'medical dental', 'fire suppression', etc.", ["compute"]);
+  }
+
+  const result = selectBackflowAssembly({
+    application,
+    hazard_degree: params.hazard_degree as "low" | "medium" | "high" | undefined,
+    pipe_size: params.pipe_size as string | undefined,
+  });
+
+  return flumSuccess(
+    `Recommended: ${result.recommended.name} (${result.recommended.abbreviation}) for ${result.recommended.degree_of_hazard} hazard. ${result.recommended.pass_criteria.length} test checks required. Est. cost: $${result.recommended.estimated_cost.low}–$${result.recommended.estimated_cost.high}.`,
+    result.installation_notes.join(" | "),
+    result,
+    { actions_available: ["compute", "export_json"], confidence: 0.95 },
+  );
+}
+
+async function handleBidGenerator(
+  request: FlumComputeRequest,
+): Promise<FlumResponse> {
+  const { params } = request;
+  const materialQuantities = (params.material_quantities ?? {}) as Record<string, number>;
+  const tasks = (params.tasks ?? []) as string[];
+
+  if (Object.keys(materialQuantities).length === 0 && tasks.length === 0) {
+    const catalogSample = MATERIAL_CATALOG.slice(0, 5).map((m) => m.item).join(", ");
+    const taskSample = Object.keys(TASK_TIMES).slice(0, 5).join(", ");
+    return flumError(
+      "Need material quantities and/or tasks.",
+      `Provide 'material_quantities' (item name → qty) and 'tasks' (task IDs). Sample materials: ${catalogSample}. Sample tasks: ${taskSample}.`,
+      ["compute"],
+    );
+  }
+
+  const result = generateBid({
+    project_type: (params.project_type as "new_construction" | "remodel" | "repair" | "emergency") ?? "remodel",
+    material_quantities: materialQuantities,
+    tasks,
+    labor_rate_override: params.labor_rate as number | undefined,
+    overhead_pct: params.overhead_pct as number | undefined,
+    permit_fees: params.permit_fees as number | undefined,
+  });
+
+  return flumSuccess(
+    `Bid total: $${result.grand_total.toFixed(2)} (Materials: $${result.material_subtotal.toFixed(2)}, Labor: $${result.labor_subtotal.toFixed(2)}, Overhead: $${result.overhead_amount.toFixed(2)}). ${result.materials.length} material line items, ${result.labor.length} labor tasks.`,
+    result.warnings.length > 0 ? result.warnings.join(" | ") : "Bid generated successfully.",
+    result,
+    { actions_available: ["compute", "export_json"], confidence: 0.90 },
   );
 }

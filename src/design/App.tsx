@@ -6,6 +6,15 @@ import { parseIntent, compute, type FlumResponse, type ToolId } from "../llm";
 // Tool page imports — lazy loaded in production build
 import { SlopeCalculator } from "../slope";
 import { PipeSizerPage } from "../tools/pipe-sizer/PipeSizerPage";
+import { FixtureCounterPage } from "../tools/fixture-counter/FixtureCounterPage";
+import { CodeCompliancePage } from "../tools/code-compliance/CodeCompliancePage";
+import { HydraulicAnalyzerPage } from "../tools/hydraulic-analyzer/HydraulicAnalyzerPage";
+import { DrainageDesignerPage } from "../tools/drainage-designer/DrainageDesignerPage";
+import { PermitNavigatorPage } from "../tools/permit-navigator/PermitNavigatorPage";
+import { AdaCompliancePage } from "../tools/ada-compliance/AdaCompliancePage";
+import { MaterialSpecPage } from "../tools/material-spec/MaterialSpecPage";
+import { BackflowTestPage } from "../tools/backflow-test/BackflowTestPage";
+import { BidGeneratorPage } from "../tools/bid-generator/BidGeneratorPage";
 
 const TOOLS: { id: ToolId; label: string; icon: string; value: string; description: string }[] = [
   { id: "slope", label: "Slope Calculator", icon: "📐", value: "11.4%", description: "Sonde-and-grade lateral slope survey with code verdict" },
@@ -175,7 +184,36 @@ function ToolPage({ toolId, onIntent }: ToolPageProps) {
     );
   }
 
-  // All other tools: placeholder with natural language input
+  // All other tools: real page component + PsiChat
+  const PAGE_MAP: Record<string, React.ReactNode> = {
+    fixture_counter: <FixtureCounterPage />,
+    code_compliance: <CodeCompliancePage />,
+    hydraulic_analyzer: <HydraulicAnalyzerPage />,
+    drainage_designer: <DrainageDesignerPage />,
+    permit_navigator: <PermitNavigatorPage />,
+    ada_compliance: <AdaCompliancePage />,
+    material_spec: <MaterialSpecPage />,
+    backflow_test: <BackflowTestPage />,
+    bid_generator: <BidGeneratorPage />,
+  };
+
+  const page = PAGE_MAP[toolId];
+  if (page) {
+    return (
+      <div>
+        <div className="psi-app__section">
+          <h2 className="psi-app__section-title">{tool.icon} {tool.label}</h2>
+          <p style={{ fontSize: 14, color: "var(--psi-ink-soft)", margin: "0 0 16px 0" }}>
+            {tool.description}
+          </p>
+          <PsiChat onIntent={onIntent} toolId={toolId} autoFocus />
+        </div>
+        {page}
+      </div>
+    );
+  }
+
+  // Unknown tool fallback
   return (
     <div>
       <div className="psi-app__section">
@@ -183,7 +221,7 @@ function ToolPage({ toolId, onIntent }: ToolPageProps) {
           {tool.icon} {tool.label}
         </h2>
         <p style={{ fontSize: 14, color: "var(--psi-ink-soft)", margin: "0 0 16px 0" }}>
-          {tool.description} · <strong>Value: {tool.value}</strong> of standard day
+          {tool.description}
         </p>
       </div>
 
