@@ -82,11 +82,47 @@ export interface HydraulicOutput {
 }
 
 // ---------------------------------------------------------------------------
+// Validation helper
+// ---------------------------------------------------------------------------
+
+function emptyHydraulicResult(warnings: string[], error: string): HydraulicOutput {
+  warnings.push(error);
+  return {
+    friction_per_100ft_psi: 0,
+    total_friction_loss_psi: 0,
+    elevation_loss_psi: 0,
+    fitting_equiv_length_ft: 0,
+    residual_pressure_psi: 0,
+    velocity_fps: 0,
+    velocity_ok: false,
+    recommended_size: null,
+    warnings,
+  };
+}
+
+// ---------------------------------------------------------------------------
 // Computation
 // ---------------------------------------------------------------------------
 
 export function analyzeHydraulics(input: HydraulicInput): HydraulicOutput {
   const warnings: string[] = [];
+
+  // Input validation
+  if (input.flow_gpm <= 0) {
+    return emptyHydraulicResult(warnings, `Flow rate (${input.flow_gpm} GPM) must be positive.`);
+  }
+  if (input.length_ft <= 0) {
+    return emptyHydraulicResult(warnings, `Pipe length (${input.length_ft} ft) must be positive.`);
+  }
+  if (input.static_pressure_psi <= 0) {
+    return emptyHydraulicResult(warnings, `Static pressure (${input.static_pressure_psi} psi) must be positive.`);
+  }
+  if (input.elevation_rise_ft < 0) {
+    return emptyHydraulicResult(warnings, `Elevation rise (${input.elevation_rise_ft} ft) must be non-negative.`);
+  }
+  if (input.fittings_count < 0) {
+    return emptyHydraulicResult(warnings, `Fittings count (${input.fittings_count}) must be non-negative.`);
+  }
 
   const cFactor = C_FACTOR[input.material] ?? 130;
   const pipeId = PIPE_ID[input.pipe_size];

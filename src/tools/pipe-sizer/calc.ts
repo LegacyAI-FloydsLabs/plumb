@@ -42,6 +42,26 @@ export interface PipeSizerOutput {
 }
 
 // ---------------------------------------------------------------------------
+// Validation helper
+// ---------------------------------------------------------------------------
+
+function emptyPipeSizerResult(warnings: string[], error: string): PipeSizerOutput {
+  warnings.push(error);
+  return {
+    water_service_size: "—",
+    main_supply_size: "—",
+    main_drain_size: "—",
+    stack_size: "—",
+    vent_size: "—",
+    residual_pressure_psi: 0,
+    pressure_ok: false,
+    code_sections: [],
+    confidence: 0,
+    warnings,
+  };
+}
+
+// ---------------------------------------------------------------------------
 // IPC 2021 Water Supply Pipe Sizing Tables (Table 710.1(2))
 // Row: WSFU range, Column: Longest developed length
 // Values: Minimum pipe diameter in inches
@@ -190,6 +210,26 @@ export function computePipeSizer(input: PipeSizerInput): PipeSizerOutput {
   const { wsfu, dfu, vent_fu, longest_run_ft, elevation_rise_ft, code, stories } = input;
   const availablePressure = input.available_pressure_psi ?? 55;
   const warnings: string[] = [];
+
+  // Input validation
+  if (wsfu < 0 || dfu < 0) {
+    return emptyPipeSizerResult(warnings, `WSFU (${wsfu}) and DFU (${dfu}) must be non-negative.`);
+  }
+  if (wsfu === 0 && dfu === 0) {
+    return emptyPipeSizerResult(warnings, "At least one of WSFU or DFU must be greater than zero.");
+  }
+  if (longest_run_ft <= 0) {
+    return emptyPipeSizerResult(warnings, `Longest developed run (${longest_run_ft} ft) must be positive.`);
+  }
+  if (elevation_rise_ft < 0) {
+    return emptyPipeSizerResult(warnings, `Elevation rise (${elevation_rise_ft} ft) must be non-negative.`);
+  }
+  if (stories < 1) {
+    return emptyPipeSizerResult(warnings, `Stories (${stories}) must be at least 1.`);
+  }
+  if (availablePressure <= 0) {
+    return emptyPipeSizerResult(warnings, `Available pressure (${availablePressure} psi) must be positive.`);
+  }
 
   // ----- Water Supply Sizing -----
   const waterSupplyTable = code === "upc-2021" ? IPC_WATER_SUPPLY_TABLE : IPC_WATER_SUPPLY_TABLE; // IPC table used as base for both; UPC differences noted in warnings
