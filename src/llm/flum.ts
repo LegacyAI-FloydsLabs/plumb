@@ -307,7 +307,7 @@ export async function compute(request: FlumComputeRequest): Promise<FlumResponse
 // ---------------------------------------------------------------------------
 
 import { computeSurvey, classifySlope, validate } from "../slope/calc";
-import type { Survey, Units, SlopeVerdict } from "../slope/types";
+import type { Survey, Units } from "../slope/types";
 
 async function computeSlope(
   request: FlumComputeRequest,
@@ -398,8 +398,9 @@ async function computeSlope(
     }
     const dia = (params.pipeDiameterIn as 4 | 6) || 4;
     const verdict = classifySlope(pct, { pipeDiameterIn: dia });
+    const minPct = "minPct" in verdict ? verdict.minPct : "N/A";
     return flumSuccess(
-      `Slope of ${pct}% is classified as: ${verdict.kind} (minimum: ${verdict.minPct}%)`,
+      `Slope of ${pct}% is classified as: ${verdict.kind} (minimum: ${minPct}%)`,
       verdict.kind === "code_compliant"
         ? "This slope meets code requirements."
         : "Consider re-lining or point repair if the slope is below minimum.",
@@ -417,7 +418,7 @@ async function computeSlope(
 
 // Placeholder imports for tools not yet implemented
 async function computePipeSizer(
-  request: FlumComputeRequest,
+  _request: FlumComputeRequest,
 ): Promise<FlumResponse> {
   // Will be implemented when PipeSizerPage is built
   return flumError(
@@ -428,7 +429,7 @@ async function computePipeSizer(
 }
 
 async function computeFixtureCounter(
-  request: FlumComputeRequest,
+  _request: FlumComputeRequest,
 ): Promise<FlumResponse> {
   // Will be implemented when FixtureCounterPage is built
   return flumError(
@@ -439,7 +440,7 @@ async function computeFixtureCounter(
 }
 
 async function computeCodeCompliance(
-  request: FlumComputeRequest,
+  _request: FlumComputeRequest,
 ): Promise<FlumResponse> {
   // Will be implemented when CodeCompliancePage is built
   return flumError(

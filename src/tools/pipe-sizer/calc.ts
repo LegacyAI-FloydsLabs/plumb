@@ -13,7 +13,33 @@
  *   - Vent: FU count + developed length → minimum vent diameter
  */
 
-import type { CodeEdition, BuildingType, PipeMaterial, PipeSizerInput, PipeSizerOutput } from "../types";
+// ---------------------------------------------------------------------------
+// Inline types (../types module does not exist yet)
+// ---------------------------------------------------------------------------
+
+export interface PipeSizerInput {
+  wsfu: number;
+  dfu: number;
+  vent_fu?: number;
+  longest_run_ft: number;
+  elevation_rise_ft: number;
+  code: "ipc-2021" | "upc-2021";
+  stories: number;
+  available_pressure_psi?: number;
+}
+
+export interface PipeSizerOutput {
+  water_service_size: string;
+  main_supply_size: string;
+  main_drain_size: string;
+  stack_size: string;
+  vent_size: string;
+  residual_pressure_psi: number;
+  pressure_ok: boolean;
+  code_sections: string[];
+  confidence: number;
+  warnings: string[];
+}
 
 // ---------------------------------------------------------------------------
 // IPC 2021 Water Supply Pipe Sizing Tables (Table 710.1(2))
@@ -94,7 +120,7 @@ const IPC_VENT_TABLE: Record<string, Record<string, string>> = {
 };
 
 // Minimum fixture branch sizes per IPC
-const IPC_MIN_BRANCH_SIZE: Record<string, string> = {
+export const IPC_MIN_BRANCH_SIZE: Record<string, string> = {
   "water_closet_tank": "3",
   "water_closet_flushometer": "3",
   "lavatory": "1-1/4",
@@ -189,7 +215,7 @@ export function computePipeSizer(input: PipeSizerInput): PipeSizerOutput {
   const elevationLoss = elevation_rise_ft * 0.433; // psi per foot of elevation
   const frictionLossPer100ft = wsfu > 20 ? 4 : 2; // simplified; real calc uses C-factor and diameter
   const frictionLoss = (frictionLossPer100ft * longest_run_ft) / 100;
-  const residualPressure = available_pressure - frictionLoss - elevationLoss;
+  const residualPressure = availablePressure - frictionLoss - elevationLoss;
   const pressureOk = residualPressure >= 20; // IPC minimum
   if (!pressureOk) {
     warnings.push(
@@ -247,6 +273,7 @@ export function computePipeSizer(input: PipeSizerInput): PipeSizerOutput {
     water_service_size: waterServiceSize,
     main_supply_size: mainSupplySize,
     main_drain_size: mainDrainSize,
+    stack_size: stackSize,
     vent_size: ventSize,
     residual_pressure_psi: Math.round(residualPressure * 10) / 10,
     pressure_ok: pressureOk,
