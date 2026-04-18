@@ -13,6 +13,8 @@
  *   - Vent: FU count + developed length → minimum vent diameter
  */
 
+import { PSI_PER_FOOT_ELEVATION, MIN_RESIDUAL_PRESSURE_PSI } from "../constants";
+
 // ---------------------------------------------------------------------------
 // Inline types (../types module does not exist yet)
 // ---------------------------------------------------------------------------
@@ -252,14 +254,14 @@ export function computePipeSizer(input: PipeSizerInput): PipeSizerOutput {
 
   // Residual pressure calculation (simplified Hazen-Williams)
   // Pressure loss ≈ friction per 100ft × length/100 + elevation head
-  const elevationLoss = elevation_rise_ft * 0.433; // psi per foot of elevation
+  const elevationLoss = elevation_rise_ft * PSI_PER_FOOT_ELEVATION; // psi per foot of elevation
   const frictionLossPer100ft = wsfu > 20 ? 4 : 2; // simplified; real calc uses C-factor and diameter
   const frictionLoss = (frictionLossPer100ft * longest_run_ft) / 100;
   const residualPressure = availablePressure - frictionLoss - elevationLoss;
-  const pressureOk = residualPressure >= 20; // IPC minimum
+  const pressureOk = residualPressure >= MIN_RESIDUAL_PRESSURE_PSI; // IPC minimum
   if (!pressureOk) {
     warnings.push(
-      `Residual pressure ${residualPressure.toFixed(1)} psi is below the 20 psi minimum per IPC §608.3. Consider increasing pipe size or reducing fixture load.`,
+      `Residual pressure ${residualPressure.toFixed(1)} psi is below the ${MIN_RESIDUAL_PRESSURE_PSI} psi minimum per IPC §608.3. Consider increasing pipe size or reducing fixture load.`,
     );
   }
 

@@ -7,6 +7,16 @@
  * FLUM Standard 000: Deterministic. 99.9% accuracy on the math.
  */
 
+import {
+  PSI_PER_FOOT_ELEVATION,
+  MIN_RESIDUAL_PRESSURE_PSI,
+  HW_CONSTANT,
+  GPM_TO_FPS_FACTOR,
+  MIN_VELOCITY_FPS,
+  MAX_VELOCITY_FPS,
+  EQUIV_LENGTH_PER_FITTING_FT,
+} from "../constants";
+
 // ---------------------------------------------------------------------------
 // Hazen-Williams Coefficients (C-factor)
 // ---------------------------------------------------------------------------
@@ -146,34 +156,34 @@ export function analyzeHydraulics(input: HydraulicInput): HydraulicOutput {
   const d = pipeId;
   const C = cFactor;
 
-  const frictionPer100ft = (4.52 * Math.pow(Q, 1.85)) / (Math.pow(C, 1.85) * Math.pow(d, 4.87));
-  const fittingEquivLength = input.fittings_count * 5; // rough: 5 ft per fitting
+  const frictionPer100ft = (HW_CONSTANT * Math.pow(Q, 1.85)) / (Math.pow(C, 1.85) * Math.pow(d, 4.87));
+  const fittingEquivLength = input.fittings_count * EQUIV_LENGTH_PER_FITTING_FT;
   const totalRun = input.length_ft + fittingEquivLength;
   const totalFriction = (frictionPer100ft * totalRun) / 100;
-  const elevationLoss = input.elevation_rise_ft * 0.433; // psi per foot
+  const elevationLoss = input.elevation_rise_ft * PSI_PER_FOOT_ELEVATION; // psi per foot
 
   const residual = input.static_pressure_psi - totalFriction - elevationLoss;
 
   // Velocity: v = Q / (π × r² × 448.83) where r in inches, Q in GPM, result in ft/s
   const rInches = d / 2;
   const areaSqIn = Math.PI * rInches * rInches;
-  const velocity = Q / (areaSqIn * 0.3208); // ft/s
+  const velocity = Q / (areaSqIn * GPM_TO_FPS_FACTOR); // ft/s
 
-  const velocityOk = velocity >= 2 && velocity <= 8;
-  if (velocity < 2) warnings.push(`Velocity ${velocity.toFixed(1)} ft/s is below 2 ft/s minimum. Risk of stagnation and sediment deposition.`);
-  if (velocity > 8) warnings.push(`Velocity ${velocity.toFixed(1)} ft/s exceeds 8 ft/s maximum. Risk of erosion, water hammer, and noise.`);
-  if (residual < 20) warnings.push(`Residual pressure ${residual.toFixed(1)} psi is below the 20 psi minimum per IPC §608.3.`);
+  const velocityOk = velocity >= MIN_VELOCITY_FPS && velocity <= MAX_VELOCITY_FPS;
+  if (velocity < MIN_VELOCITY_FPS) warnings.push(`Velocity ${velocity.toFixed(1)} ft/s is below ${MIN_VELOCITY_FPS} ft/s minimum. Risk of stagnation and sediment deposition.`);
+  if (velocity > MAX_VELOCITY_FPS) warnings.push(`Velocity ${velocity.toFixed(1)} ft/s exceeds ${MAX_VELOCITY_FPS} ft/s maximum. Risk of erosion, water hammer, and noise.`);
+  if (residual < MIN_RESIDUAL_PRESSURE_PSI) warnings.push(`Residual pressure ${residual.toFixed(1)} psi is below the ${MIN_RESIDUAL_PRESSURE_PSI} psi minimum per IPC §608.3.`);
 
   // Recommend larger pipe if velocity or pressure is out of range
   let recommendedSize: string | null = null;
-  if (!velocityOk || residual < 20) {
+  if (!velocityOk || residual < MIN_RESIDUAL_PRESSURE_PSI) {
     const sizes = Object.entries(PIPE_ID).sort((a, b) => a[1] - b[1]);
     for (const [name, id] of sizes) {
       if (id <= pipeId) continue;
-      const testVelocity = Q / (Math.PI * (id / 2) * (id / 2) * 0.3208);
-      const testFriction = (4.52 * Math.pow(Q, 1.85)) / (Math.pow(C, 1.85) * Math.pow(id, 4.87));
+      const testVelocity = Q / (Math.PI * (id / 2) * (id / 2) * GPM_TO_FPS_FACTOR);
+      const testFriction = (HW_CONSTANT * Math.pow(Q, 1.85)) / (Math.pow(C, 1.85) * Math.pow(id, 4.87));
       const testResidual = input.static_pressure_psi - (testFriction * totalRun / 100) - elevationLoss;
-      if (testVelocity >= 2 && testVelocity <= 8 && testResidual >= 20) {
+      if (testVelocity >= MIN_VELOCITY_FPS && testVelocity <= MAX_VELOCITY_FPS && testResidual >= MIN_RESIDUAL_PRESSURE_PSI) {
         recommendedSize = name;
         break;
       }

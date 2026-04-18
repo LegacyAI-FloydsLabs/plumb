@@ -49,9 +49,6 @@ const COMPAT_MATRIX: CompatibilityResult[] = [
   // Stainless steel
   { material_a: "stainless", material_b: "copper", compatible: true, transition: "Press-fit or threaded connection", notes: "Stainless is compatible with copper. Use approved press fittings.", code_reference: "IPC §605.2" },
   { material_a: "stainless", material_b: "stainless", compatible: true, transition: "Press-fit, welded, or mechanical joint", notes: "Growing in use for water supply. Verify pressure rating.", code_reference: "IPC §605.2" },
-
-  // Incompatible
-  { material_a: "copper", material_b: "galvanized", compatible: true, transition: "DIELECTRIC UNION REQUIRED", notes: "Without dielectric fitting: rapid galvanic corrosion. This is a code violation.", code_reference: "IPC §605.3 (dielectric required)" },
 ];
 
 // ---------------------------------------------------------------------------
