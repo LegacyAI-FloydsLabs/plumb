@@ -223,5 +223,3 @@ export function selectBackflowAssembly(input: BackflowInput): BackflowOutput {
     warnings,
   };
 }
-
-export { ASSEMBLIES };

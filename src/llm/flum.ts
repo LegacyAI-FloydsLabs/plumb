@@ -105,20 +105,6 @@ export function flumSuccess<T>(
 // FLUM Pending Response (Standard 000 §3.5 — async operations)
 // ---------------------------------------------------------------------------
 
-export function flumPending(
-  resultText: string,
-  hint: string,
-  waitHandle: string,
-): FlumResponse<{ wait_handle: string }> {
-  return {
-    status: "pending",
-    result: resultText,
-    hint,
-    actions_available: ["check_status"],
-    data: { wait_handle: waitHandle },
-  };
-}
-
 // ---------------------------------------------------------------------------
 // Natural Language Intent Parser (Standard 000 §3.2 — Floor-Level Simplicity)
 // ---------------------------------------------------------------------------

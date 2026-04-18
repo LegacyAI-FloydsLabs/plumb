@@ -72,7 +72,7 @@ const MATERIAL_CATALOG: MaterialLineItem[] = [
 // Labor Rate Database
 // ---------------------------------------------------------------------------
 
-export const LABOR_RATES: Record<string, { rate_per_hour: number; unit: string }> = {
+const LABOR_RATES: Record<string, { rate_per_hour: number; unit: string }> = {
   plumber_journeyman: { rate_per_hour: 75, unit: "hr" },
   plumber_apprentice: { rate_per_hour: 45, unit: "hr" },
   plumber_master: { rate_per_hour: 110, unit: "hr" },
