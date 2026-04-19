@@ -17,11 +17,13 @@
 | 2026-04-19T10:45:00Z | FLOYD v4.6 | Governance alignment: port 17449 claimed, CI fixed, extract bugs repaired, docs aligned, pushed to LegacyAI-FloydsLabs/plumb |
 
 | 2026-04-19T12:38:00Z | Claude | FLUM API contract integration tests (37 cases, commit 47d6fc4) — 204/204 pass |
+| 2026-04-19T18:15:00Z | Claude | Two-layer REST API contract for LLM steering (commit 00f3845) — tool-registry.ts, worker schema endpoints, 31 registry tests |
+| 2026-04-19T18:30:00Z | Claude | Runtime behavior: diagnostic_dump (FLUM 3.8), conditional include_advanced (3.3) — 241/241 pass |
 ## PROJECT STATUS
 
 - **Build**: PASSING (~101 KB gzipped total, tsc strict clean)
-- **Tests**: 204/204 pass (13 test files — all tools + entity extraction + FLUM API contract)
-- **Git**: 28 commits on `main` (pushed to github.com/LegacyAI-FloydsLabs/plumb)
+- **Tests**: 241/241 pass (14 test files — all tools + entity extraction + FLUM API contract + tool registry + diagnostics)
+- **Git**: 31 commits on `main` (pushed to github.com/LegacyAI-FloydsLabs/plumb)
 - **Quality Gate**: CLOSED — all 5 eval-gated units complete
 - **Governance**: v1.3.0 compliant (CLAUDE.md, SSOT/, Issues/ initialized)
 - **CI**: 4/4 green (DCO, build, test, lighthouse)
@@ -51,42 +53,44 @@
 
 ## INTEGRATED MODULES
 
-```
-src/
-├── main.tsx                    → App shell (react-router navigation)
+``` src/
+├── main.tsx                    -> App shell (react-router navigation)
 ├── design/
-│   ├── App.tsx                 → 11-tool nav + routing + FLUM result cards
-│   ├── PsiChat.tsx             → Natural language input → FLUM intent parser
-│   └── styles.css              → Shared design system (dark/light)
+│   ├── App.tsx                 -> 11-tool nav + routing + FLUM result cards
+│   ├── PsiChat.tsx             -> Natural language input -> FLUM intent parser
+│   └── styles.css              -> Shared design system (dark/light)
 ├── llm/
-│   ├── flum.ts                 → FLUM orchestration (One Door In)
-│   │                             compute() → 11 tool handlers
-│   │                             parseIntent() → keyword → tool routing
-│   │                             sensor source type definitions (no runtime sensor integration)
-│   └── index.ts                → Public re-exports (compute, parseIntent, types)
-├── slope/                      → ✅ Calc + UI + tests
-│   ├── SlopeCalculator.tsx     → Form UI + SVG profile chart
-│   ├── calc.ts                 → Pure calc engine
-│   └── types.ts                → Domain types
+│   ├── flum.ts                 -> FLUM orchestration (One Door In)
+│   │                             compute() -> 11 tool handlers + diagnostics
+│   │                             parseIntent() -> keyword -> tool routing
+│   │                             DiagnosticStep type (FLUM 3.8)
+│   │                             include_advanced conditional metadata (FLUM 3.3)
+│   ├── tool-registry.ts        -> Two-layer tool definitions (Layer 1 + Layer 2 JSON Schemas)
+│   ├── extract.ts              -> Entity extraction (fixtures, pipes, measurements)
+│   ├── index.ts                -> Public re-exports (compute, parseIntent, types)
+│   └── __tests__/
+│       ├── flum-api-contract.test.ts -> 43 integration tests (all 11 tools + routing + diagnostics)
+│       └── tool-registry.test.ts     -> 31 registry tests (Layer 1 compliance, schema structure)
+├── slope/                      -> Calc + UI + tests
+│   ├── SlopeCalculator.tsx     -> Form UI + SVG profile chart
+│   ├── calc.ts                 -> Pure calc engine
+│   └── types.ts                -> Domain types
 ├── tools/
-│   ├── constants.ts            → Shared engineering constants (IPC/UPC)
-│   ├── pipe-sizer/             → ✅ Calc + UI + tests + validation
-│   ├── fixture-counter/        → ✅ Calc + UI + tests
-│   ├── code-compliance/        → ✅ Calc + UI + tests
-│   ├── hydraulic-analyzer/     → ✅ Calc + UI + tests + validation + constants
-│   ├── drainage-designer/      → ✅ Calc + UI + tests
-│   ├── permit-navigator/       → ✅ Calc + UI + tests
-│   ├── ada-compliance/         → ✅ Calc + UI + tests
-│   ├── material-spec/          → ✅ Calc + UI + tests
-│   ├── backflow-test/          → ✅ Calc + UI + tests
-│   └── bid-generator/          → ✅ Calc + UI + tests
+│   ├── constants.ts            -> Shared engineering constants (IPC/UPC)
+│   ├── pipe-sizer/             -> Calc + UI + tests + validation
+│   ├── fixture-counter/        -> Calc + UI + tests
+│   ├── code-compliance/        -> Calc + UI + tests
+│   ├── hydraulic-analyzer/     -> Calc + UI + tests + validation + constants
+│   ├── drainage-designer/      -> Calc + UI + tests
+│   ├── permit-navigator/       -> Calc + UI + tests
+│   ├── ada-compliance/         -> Calc + UI + tests
+│   ├── material-spec/          -> Calc + UI + tests
+│   ├── backflow-test/          -> Calc + UI + tests
+│   └── bid-generator/          -> Calc + UI + tests
 └── sensors/
-    └── index.ts                → SensorSource type only (adapter not yet implemented)
+    └── index.ts                -> SensorSource type only (adapter not yet implemented)
 ```
 
-│   ├── extract.ts            → Entity extraction (fixtures, pipes, measurements)
-│   └── __tests__/
-│       └── flum-api-contract.test.ts → 37 integration tests (all 11 tools + routing)
 ## ARCHITECTURE
 
 - **Entry**: `main.tsx` → `App` (BrowserRouter with 11 tool routes)

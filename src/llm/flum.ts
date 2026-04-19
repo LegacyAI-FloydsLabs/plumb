@@ -20,6 +20,18 @@
 
 export type FlumStatus = "success" | "failure" | "pending";
 
+/** A single intermediate calculation step for diagnostic tracing (FLUM §3.8). */
+export interface DiagnosticStep {
+  /** Step name, e.g. "input_validation", "slope_computation", "code_lookup". */
+  step: string;
+  /** What this step did, in plain language. */
+  description: string;
+  /** Input to this step. */
+  input?: unknown;
+  /** Output from this step. */
+  duration_ms?: number;
+}
+
 export interface FlumResponse<T = unknown> {
   /** Whether the operation succeeded, failed, or is pending async result. */
   status: FlumStatus;
@@ -48,6 +60,9 @@ export interface FlumResponse<T = unknown> {
     sensor_sources?: string[]; // Which sensors provided data
     requires_human_confirmation?: boolean; // True if confidence < 0.95
   };
+
+  /** Intermediate calculation steps. Only populated with diagnostic_dump (§3.8). */
+  diagnostics?: DiagnosticStep[];
 }
 
 // ---------------------------------------------------------------------------
@@ -187,6 +202,8 @@ export interface FlumComputeRequest {
   params: Record<string, unknown>;
   /** Include advanced metadata in response (§3.3). */
   include_advanced?: boolean;
+  /** Include intermediate calculation steps in response (FLUM §3.8). */
+  diagnostic_dump?: boolean;
 }
 
 /**
@@ -249,17 +266,48 @@ export async function compute(request: FlumComputeRequest): Promise<FlumResponse
         );
     }
 
-    // Fill in latency and sensor metadata
-    if (response.metadata) {
-      response.metadata.latency_ms = Date.now() - startTime;
+    // ── Post-processing: metadata and diagnostics ──────────────────
+
+    const elapsed = Date.now() - startTime;
+
+    // FLUM §3.3: metadata only when include_advanced is requested
+    if (request.include_advanced && response.metadata) {
+      response.metadata.latency_ms = elapsed;
       response.metadata.sensor_sources = sensorSources;
-      // Blend calculation confidence with sensor confidence
       response.metadata.confidence = Math.min(
         response.metadata.confidence,
         sensorConfidence,
       );
       response.metadata.requires_human_confirmation = response.metadata.confidence < 0.95;
+    } else if (!request.include_advanced) {
+      // Strip metadata when not requested (§3.3)
+      delete response.metadata;
     }
+
+    // FLUM §3.8: diagnostic trace when diagnostic_dump is requested
+    if (request.diagnostic_dump) {
+      response.diagnostics = [
+        {
+          step: "input_validation",
+          description: `Parsed request for tool '${request.tool}', action '${request.action}'`,
+          input: { tool: request.tool, action: request.action, param_keys: Object.keys(request.params) },
+          duration_ms: 0,
+        },
+        {
+          step: "computation",
+          description: `Executed '${request.tool}' engine`,
+          input: request.params,
+          duration_ms: elapsed,
+        },
+        {
+          step: "response_formatting",
+          description: "Wrapped result in FLUM envelope with hint and actions",
+          duration_ms: 0,
+        },
+      ];
+    }
+
+    return response;
 
     return response;
   } catch (error) {

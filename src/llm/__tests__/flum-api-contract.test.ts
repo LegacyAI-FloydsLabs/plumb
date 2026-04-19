@@ -22,12 +22,16 @@ function expectValidEnvelope(r: FlumResponse) {
 }
 
 function expectSuccess(r: FlumResponse) {
-  expectValidEnvelope(r);
-  expect(r.status).toBe("success");
-  expect(r.metadata).toBeDefined();
-  expect(typeof r.metadata!.confidence).toBe("number");
-  expect(r.metadata!.confidence).toBeGreaterThan(0);
-  expect(r.metadata!.confidence).toBeLessThanOrEqual(1);
+    expectValidEnvelope(r);
+    expect(r.status).toBe("success");
+}
+
+function expectSuccessWithMetadata(r: FlumResponse) {
+    expectSuccess(r);
+    expect(r.metadata).toBeDefined();
+    expect(typeof r.metadata!.confidence).toBe("number");
+    expect(r.metadata!.confidence).toBeGreaterThan(0);
+    expect(r.metadata!.confidence).toBeLessThanOrEqual(1);
 }
 
 function expectFailure(r: FlumResponse) {
@@ -413,4 +417,108 @@ describe("FLUM parseIntent — natural language routing", () => {
     expect(intent.tool).toBe("slope");
     expect(intent.confidence).toBeLessThan(0.5);
   });
+});
+
+describe("FLUM x3.3 include_advanced / x3.8 diagnostic_dump", () => {
+        it("includes metadata when include_advanced is true", async () => {
+                const r = await compute({
+                        tool: "slope",
+                        action: "compute",
+                        params: {
+                                stations: [
+                                        { label: "A", distance: 0, rodReading: 4.5 },
+                                        { label: "B", distance: 50, rodReading: 4.75 },
+                                ],
+                        },
+                        include_advanced: true,
+                });
+                expectSuccessWithMetadata(r);
+                expect(r.metadata!.latency_ms).toBeGreaterThanOrEqual(0);
+                expect(r.metadata!.sensor_sources).toBeDefined();
+        });
+
+        it("strips metadata when include_advanced is false", async () => {
+                const r = await compute({
+                        tool: "slope",
+                        action: "compute",
+                        params: {
+                                stations: [
+                                        { label: "A", distance: 0, rodReading: 4.5 },
+                                        { label: "B", distance: 50, rodReading: 4.75 },
+                                ],
+                        },
+                        include_advanced: false,
+                });
+                expectSuccess(r);
+                expect(r.metadata).toBeUndefined();
+        });
+
+        it("strips metadata when include_advanced is omitted", async () => {
+                const r = await compute({
+                        tool: "slope",
+                        action: "compute",
+                        params: {
+                                stations: [
+                                        { label: "A", distance: 0, rodReading: 4.5 },
+                                        { label: "B", distance: 50, rodReading: 4.75 },
+                                ],
+                        },
+                });
+                expectSuccess(r);
+                expect(r.metadata).toBeUndefined();
+        });
+
+        it("includes diagnostics when diagnostic_dump is true", async () => {
+                const r = await compute({
+                        tool: "slope",
+                        action: "compute",
+                        params: {
+                                stations: [
+                                        { label: "A", distance: 0, rodReading: 4.5 },
+                                        { label: "B", distance: 50, rodReading: 4.75 },
+                                ],
+                        },
+                        diagnostic_dump: true,
+                });
+                expectSuccess(r);
+                expect(r.diagnostics).toBeDefined();
+                expect(r.diagnostics!.length).toBeGreaterThanOrEqual(3);
+                expect(r.diagnostics!.some((d) => d.step === "input_validation")).toBe(true);
+                expect(r.diagnostics!.some((d) => d.step === "computation")).toBe(true);
+                expect(r.diagnostics!.some((d) => d.step === "response_formatting")).toBe(true);
+        });
+
+        it("omits diagnostics when diagnostic_dump is false", async () => {
+                const r = await compute({
+                        tool: "slope",
+                        action: "compute",
+                        params: {
+                                stations: [
+                                        { label: "A", distance: 0, rodReading: 4.5 },
+                                        { label: "B", distance: 50, rodReading: 4.75 },
+                                ],
+                        },
+                        diagnostic_dump: false,
+                });
+                expectSuccess(r);
+                expect(r.diagnostics).toBeUndefined();
+        });
+
+        it("supports both include_advanced and diagnostic_dump together", async () => {
+                const r = await compute({
+                        tool: "slope",
+                        action: "compute",
+                        params: {
+                                stations: [
+                                        { label: "A", distance: 0, rodReading: 4.5 },
+                                        { label: "B", distance: 50, rodReading: 4.75 },
+                                ],
+                        },
+                        include_advanced: true,
+                        diagnostic_dump: true,
+                });
+                expectSuccessWithMetadata(r);
+                expect(r.diagnostics).toBeDefined();
+                expect(r.diagnostics!.length).toBeGreaterThanOrEqual(3);
+        });
 });
