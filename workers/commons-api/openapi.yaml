@@ -8,7 +8,12 @@ info:
 
     Rate limit: 60 requests/minute per IP.
 
-    All responses return the FLUM Standard 000 envelope.
+    All responses return the FLUM Standard 000 envelope (status, result, hint, actions_available, tip?, data?, metadata?).
+
+    Three entry points:
+    - `POST /compute` — natural language input (LLM-friendly)
+    - `POST /{tool}` — structured per-tool input
+    - `GET /tools` — discover available tools and required parameters
   license:
     name: AGPL-3.0-or-later
     url: https://www.gnu.org/licenses/agpl-3.0.en.html
@@ -16,10 +21,48 @@ info:
 servers:
   - url: https://commons.plumb.tools/api/v1
     description: Production
-  - url: https://commons.plumb.tools/api/v1/staging
-    description: Staging
+  - url: http://localhost:17449/api/v1
+    description: Local development
 
 paths:
+  /tools:
+    get:
+      operationId: listTools
+      summary: Discover available tools
+      responses:
+        "200":
+          description: Array of tool descriptors
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ToolInfo"
+
+  /compute:
+    post:
+      operationId: computeNaturalLanguage
+      summary: Natural language compute entry point — LLM-friendly
+      description: |
+        Accepts natural language input (e.g., "3 inch PVC at 1/4 inch per foot") and routes
+        to the correct tool via keyword matching. Returns a FLUM envelope with the computation result.
+
+        This is the primary entry point for LLM integration. An agent sends a single string
+        and gets back a structured response with result, hint, and available next actions.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/NaturalLanguageRequest"
+      responses:
+        "200":
+          description: FLUM envelope
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FlumEnvelope"
+
   /slope:
     post:
       operationId: computeSlope
@@ -58,8 +101,8 @@ paths:
 
   /fixture-counter:
     post:
-      operationId: countFixtures
-      summary: Fixture Counter — DFU and WSFU counts
+      operationId: computeFixtureCounter
+      summary: Fixture Counter — DFU and WSFU counting
       requestBody:
         required: true
         content:
@@ -69,11 +112,15 @@ paths:
       responses:
         "200":
           description: FLUM envelope
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FlumEnvelope"
 
   /code-compliance:
     post:
-      operationId: lookupCode
-      summary: Code Book — IPC/UPC section lookup
+      operationId: computeCodeCompliance
+      summary: Code Book — IPC/UPC code section lookup
       requestBody:
         required: true
         content:
@@ -83,11 +130,15 @@ paths:
       responses:
         "200":
           description: FLUM envelope
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FlumEnvelope"
 
   /hydraulic-analyzer:
     post:
-      operationId: analyzeHydraulics
-      summary: Pressure Reader — pressure, flow, and hydraulic analysis
+      operationId: computeHydraulicAnalyzer
+      summary: Pressure Reader — pressure, flow, friction analysis
       requestBody:
         required: true
         content:
@@ -97,11 +148,15 @@ paths:
       responses:
         "200":
           description: FLUM envelope
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FlumEnvelope"
 
   /drainage-designer:
     post:
-      operationId: designDrainage
-      summary: Drain Layout — stacks, vents, and cleanouts
+      operationId: computeDrainageDesigner
+      summary: Drain Layout — stack, cleanout, vent layout
       requestBody:
         required: true
         content:
@@ -111,11 +166,15 @@ paths:
       responses:
         "200":
           description: FLUM envelope
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FlumEnvelope"
 
   /permit-navigator:
     post:
-      operationId: navigatePermit
-      summary: Permit Finder — permit type and fee lookup
+      operationId: computePermitNavigator
+      summary: Permit Finder — permit requirements and fee estimation
       requestBody:
         required: true
         content:
@@ -125,10 +184,14 @@ paths:
       responses:
         "200":
           description: FLUM envelope
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FlumEnvelope"
 
   /ada-compliance:
     post:
-      operationId: checkAdaCompliance
+      operationId: computeAdaCompliance
       summary: Clearance Check — ADA clearance verification
       requestBody:
         required: true
@@ -139,11 +202,15 @@ paths:
       responses:
         "200":
           description: FLUM envelope
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FlumEnvelope"
 
   /material-spec:
     post:
-      operationId: checkMaterial
-      summary: Material Match — material compatibility and BOM
+      operationId: computeMaterialSpec
+      summary: Material Match — compatibility and transition fittings
       requestBody:
         required: true
         content:
@@ -153,11 +220,15 @@ paths:
       responses:
         "200":
           description: FLUM envelope
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FlumEnvelope"
 
   /backflow-test:
     post:
-      operationId: selectBackflowAssembly
-      summary: Backflow Log — assembly selection and test logging
+      operationId: computeBackflowTest
+      summary: Backflow Log — assembly selection and test criteria
       requestBody:
         required: true
         content:
@@ -167,11 +238,15 @@ paths:
       responses:
         "200":
           description: FLUM envelope
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FlumEnvelope"
 
   /bid-generator:
     post:
-      operationId: generateBid
-      summary: Bid Writer — complete bid generation
+      operationId: computeBidGenerator
+      summary: Bid Writer — bid estimation with materials and labor
       requestBody:
         required: true
         content:
@@ -181,139 +256,230 @@ paths:
       responses:
         "200":
           description: FLUM envelope
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FlumEnvelope"
 
 components:
   schemas:
+    # ── FLUM envelope ───────────────────────────────────────────────────────────
     FlumEnvelope:
       type: object
+      required: [status, result, hint, actions_available]
       properties:
         status:
           type: string
           enum: [success, failure, pending]
+          description: Whether the operation succeeded, failed, or is pending.
         result:
           type: string
+          description: Human-readable result text. No raw hex/binary/codes.
         hint:
           type: string
-        tip:
-          type: string
+          description: One-sentence instruction for the caller's next step.
         actions_available:
           type: array
           items:
             type: string
+          description: Array of valid next actions the caller can take.
+        tip:
+          type: string
+          description: Optional nudge when the caller could be more efficient.
+        data:
+          description: Structured data payload (tool-specific).
         metadata:
           type: object
           properties:
+            trace_id:
+              type: string
+            latency_ms:
+              type: number
             confidence:
               type: number
-              minimum: 0
-              maximum: 1
+              description: 0-1, how confident the engine is.
+            tier_tested:
+              type: integer
+              enum: [1, 2, 3]
+            sensor_sources:
+              type: array
+              items:
+                type: string
             requires_human_confirmation:
               type: boolean
+              description: True if confidence < 0.95.
 
-    SlopeInput:
+    # ── Discovery ───────────────────────────────────────────────────────────────
+    ToolInfo:
       type: object
       properties:
-        stations:
+        id:
+          type: string
+          description: Tool identifier matching the FLUM ToolId.
+        name:
+          type: string
+          description: Human-readable tool name.
+        description:
+          type: string
+          description: What the tool does.
+        required_params:
           type: array
           items:
+            type: string
+          description: Parameter names required for the compute action.
+
+    # ── Natural language entry point ───────────────────────────────────────────
+    NaturalLanguageRequest:
+      type: object
+      required: [input]
+      properties:
+        input:
+          type: string
+          description: Natural language query. E.g. "3 inch PVC at 1/4 inch per foot".
+        include_advanced:
+          type: boolean
+          default: false
+          description: Include trace metadata in response.
+
+    # ── Per-tool input schemas ──────────────────────────────────────────────────
+    SlopeInput:
+      type: object
+      required: [stations]
+      properties:
+        action:
+          type: string
+          enum: [compute, classify]
+          default: compute
+        stations:
+          type: array
+          description: Survey station measurements.
+          items:
             type: object
+            required: [label, distance, rodReading, depth]
             properties:
-              station: { type: number }
-              distance: { type: number }
-              invert: { type: number }
-        pipe_diameter_in: { type: number }
-        units: { type: string, enum: [imperial, metric] }
-        lang: { type: string, enum: [en, es], default: en }
+              label: { type: number }
+              distance: { type: number, description: Distance from origin (ft). }
+              rodReading: { type: number, description: Rod reading at station. }
+              depth: { type: number, description: Depth measurement. }
+        units:
+          type: string
+          enum: [imperial, metric]
+          default: imperial
+        jobId:
+          type: string
+        pipeDiameterIn:
+          type: number
+          enum: [4, 6]
+          default: 4
+        pct:
+          type: number
+          description: Slope percentage (only for classify action).
 
     PipeSizerInput:
       type: object
+      required: [wsfu, dfu]
       properties:
-        wsfu: { type: number }
-        dfu: { type: number }
+        wsfu: { type: number, description: Water supply fixture units. }
+        dfu: { type: number, description: Drainage fixture units. }
         vent_fu: { type: number }
-        longest_run_ft: { type: number }
-        elevation_rise_ft: { type: number }
-        code: { type: string, enum: [ipc-2021, upc-2021] }
-        stories: { type: number }
+        longest_run_ft: { type: number, default: 60 }
+        elevation_rise_ft: { type: number, default: 0 }
+        code: { type: string, enum: [ipc-2021, upc-2021], default: ipc-2021 }
+        stories: { type: number, default: 1 }
         available_pressure_psi: { type: number }
-        lang: { type: string, enum: [en, es], default: en }
 
     FixtureCounterInput:
       type: object
+      required: [fixtures]
       properties:
         fixtures:
-          type: array
-          items:
-            type: object
-            properties:
-              type: { type: string }
-              count: { type: number }
-        building_class: { type: string, enum: [residential, commercial, industrial] }
-        lang: { type: string, enum: [en, es], default: en }
+          type: object
+          description: Map of fixture key to count.
+          additionalProperties: { type: number }
+        bathroom_groups: { type: number, default: 0 }
+        occupancy: { type: string, enum: [private, public], default: private }
+        code: { type: string, enum: [ipc-2021, upc-2021], default: ipc-2021 }
 
     CodeComplianceInput:
       type: object
+      required: [query]
       properties:
-        jurisdiction: { type: string }
-        section: { type: string }
-        query: { type: string }
-        lang: { type: string, enum: [en, es], default: en }
+        query: { type: string, description: "Code query, e.g. 'trap arm length'." }
+        code: { type: string, enum: [ipc-2021, upc-2021, both], default: both }
+        category: { type: string }
 
     HydraulicAnalyzerInput:
       type: object
+      required: [flow_gpm, pipe_size]
       properties:
-        pipe_diameter_in: { type: number }
-        material: { type: string }
-        length_ft: { type: number }
-        flow_rate_gpm: { type: number }
-        inlet_pressure_psi: { type: number }
-        lang: { type: string, enum: [en, es], default: en }
+        flow_gpm: { type: number, description: Flow rate in GPM. }
+        pipe_size: { type: string, description: 'Pipe size, e.g. "3/4".' }
+        material: { type: string, default: copper }
+        length_ft: { type: number, default: 50 }
+        static_pressure_psi: { type: number, default: 55 }
+        elevation_rise_ft: { type: number, default: 0 }
+        fittings_count: { type: number, default: 0 }
 
     DrainageDesignerInput:
       type: object
+      required: [total_fu]
       properties:
-        floors: { type: number }
-        fixtures_per_floor: { type: number }
-        building_class: { type: string }
-        lang: { type: string, enum: [en, es], default: en }
+        total_fu: { type: number, description: Total fixture units. }
+        building_drain_size: { type: string, default: "4" }
+        total_run_ft: { type: number, default: 100 }
+        direction_changes: { type: number, default: 0 }
+        stories: { type: number, default: 1 }
+        code: { type: string, enum: [ipc-2021, upc-2021], default: ipc-2021 }
 
     PermitNavigatorInput:
       type: object
+      required: [description]
       properties:
-        project_type: { type: string }
-        jurisdiction: { type: string }
-        scope: { type: string }
-        lang: { type: string, enum: [en, es], default: en }
+        description: { type: string, description: "Project description, e.g. 'bathroom remodel'." }
+        project_value: { type: number }
+        occupancy: { type: string, enum: [residential, commercial], default: residential }
 
     AdaComplianceInput:
       type: object
+      required: [measurements]
       properties:
-        fixture_type: { type: string }
-        mounting_height_in: { type: number }
-        side_clearance_in: { type: number }
-        lang: { type: string, enum: [en, es], default: en }
+        measurements:
+          type: object
+          description: Map of requirement ID to measured value.
+          additionalProperties: { type: number }
+        categories:
+          type: array
+          items: { type: string }
 
     MaterialSpecInput:
       type: object
+      required: [material_a, material_b]
       properties:
-        from_material: { type: string }
-        to_material: { type: string }
-        application: { type: string }
-        lang: { type: string, enum: [en, es], default: en }
+        material_a: { type: string, description: "First material, e.g. 'copper'." }
+        material_b: { type: string, description: "Second material, e.g. 'pex'." }
+        pipe_size: { type: string }
+        joint_count: { type: number }
 
     BackflowTestInput:
       type: object
+      required: [application]
       properties:
-        assembly_type: { type: string }
-        size_in: { type: number }
-        test_pressure_psi: { type: number }
-        lang: { type: string, enum: [en, es], default: en }
+        application: { type: string, description: "Application description, e.g. 'irrigation system'." }
+        hazard_degree: { type: string, enum: [low, medium, high] }
+        pipe_size: { type: string }
 
     BidGeneratorInput:
       type: object
+      required: [material_quantities]
       properties:
-        project_type: { type: string }
-        scope: { type: string }
-        fixtures: { type: array, items: { type: string } }
+        material_quantities:
+          type: object
+          description: Map of material item name to quantity.
+          additionalProperties: { type: number }
+        tasks:
+          type: array
+          items: { type: string }
+        project_type: { type: string, enum: [new_construction, remodel, repair, emergency], default: remodel }
         labor_rate: { type: number }
-        lang: { type: string, enum: [en, es], default: en }
+        overhead_pct: { type: number }
+        permit_fees: { type: number }

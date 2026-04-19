@@ -55,7 +55,7 @@ This pattern is deliberate — it reinforces evidence-first thinking and makes t
 
 ## Architecture Facts
 
-- Pure client-side SPA. No server, no API routes, no HTTP endpoints. All computation runs in the browser.
+- PWA client + optional Cloudflare Worker API. Worker routes all computation through FLUM compute() (One Door In). OpenAPI spec at workers/commons-api/openapi.yaml. Worker is deployable but not yet hosted.
 - 3 runtime dependencies only: react, react-dom, react-router-dom. Zero server-side dependencies.
 - 11 tools, each with identical structure: `calc.ts` (pure function, no side effects) + `*Page.tsx` (UI) + unit tests.
 - FLUM orchestration in `src/llm/flum.ts` is the single compute entry point. No tool has its own API surface.
