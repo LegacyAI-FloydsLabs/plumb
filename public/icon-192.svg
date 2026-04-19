@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192" width="192" height="192">
+  <!-- Plumb PWA icon — monospace P on amber field -->
+  <rect width="192" height="192" fill="#b45309"/>
+  <rect x="8" y="8" width="176" height="176" fill="#fbbf24"/>
+  <text x="96" y="136" font-family="'Courier New', Courier, monospace" font-weight="bold" font-size="128" text-anchor="middle" fill="#1c1917">P</text>
+</svg>

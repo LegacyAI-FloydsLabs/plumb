@@ -1,9 +1,21 @@
 {
-  "name": "@psi/slope-calculator",
+  "name": "@legacyai/plumb",
   "private": true,
-  "version": "0.1.0",
+  "version": "0.9.0",
   "type": "module",
-  "description": "PSI sonde-and-grade slope calculator. Standalone today, PWA module tomorrow.",
+  "description": "Free tools for the plumbing trade. Offline. In your pocket. Yours forever.",
+  "author": "Douglas Talley <douglas@legacyai.space> (https://legacyai.space)",
+  "license": "AGPL-3.0-or-later",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/legacyai/plumb"
+  },
+  "homepage": "https://legacyai.space",
+  "keywords": ["plumbing", "pwa", "offline", "calculator", "field-tool", "agpl"],
+  "funding": {
+    "type": "other",
+    "url": "https://legacyai.space"
+  },
   "scripts": {
     "dev": "vite --port 17448",
     "build": "tsc -b && vite build",
