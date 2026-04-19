@@ -40,7 +40,7 @@ export function BidGeneratorPage() {
   }, [projectType, selectedMaterials, selectedTasks, laborRate, overheadPct, permitFees]);
 
   return (
-    <div className="psi-slope" style={{ maxWidth: 720 }}>
+    <div className="psi-slope" style={{ maxWidth: "none", width: "100%" }}>
       <section style={{ marginBottom: 24 }}>
         <h2 className="psi-slope__section-title" style={{ fontSize: 14 }}>Project Type</h2>
         <div style={{ display: "flex", gap: 8, marginBottom: 12 }}>
@@ -57,7 +57,7 @@ export function BidGeneratorPage() {
             <button key={key} onClick={() => toggleTask(key)} type="button" aria-pressed={selectedTasks.has(key)} style={{ display: "flex", alignItems: "center", gap: 8, padding: "6px 12px", borderRadius: 6, cursor: "pointer", background: selectedTasks.has(key) ? "var(--psi-p100, #dbeafe)" : "transparent", border: selectedTasks.has(key) ? "1px solid var(--psi-accent, #0ea5e9)" : "1px solid transparent", textAlign: "left", width: "100%", font: "inherit", color: "inherit" }}>
               <span style={{ fontSize: 14 }}>{selectedTasks.has(key) ? "☑" : "☐"}</span>
               <span style={{ fontSize: 13, flex: 1 }}>{task.description}</span>
-              <span style={{ fontSize: 11, color: "var(--psi-ink-soft, #475569)" }}>{task.hours} hr</span>
+              <span style={{ fontSize: 12, color: "var(--psi-ink-soft)", fontFamily: "ui-monospace, monospace", fontVariantNumeric: "tabular-nums" }}>{task.hours} hr</span>
             </button>
           ))}
         </div>
@@ -68,7 +68,7 @@ export function BidGeneratorPage() {
         <div style={{ display: "grid", gap: 4, maxHeight: 300, overflowY: "auto" }}>
           {MATERIAL_CATALOG.map((item) => (
             <div key={item.item} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "4px 12px", borderRadius: 6, background: "var(--psi-surface, #f8fafc)" }}>
-              <span style={{ fontSize: 12 }}>{item.item} <span style={{ color: "var(--psi-ink-soft, #475569)" }}>${item.unit_cost}/{item.unit}</span></span>
+              <span style={{ fontSize: 13 }}>{item.item} <span style={{ color: "var(--psi-ink-soft)", fontFamily: "ui-monospace, monospace", fontVariantNumeric: "tabular-nums" }}>${item.unit_cost}/{item.unit}</span></span>
               <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
                 <button onClick={() => adjustMaterial(item.item, -1)} style={{ width: 24, height: 24, borderRadius: 4, border: "1px solid var(--psi-border, #e2e8f0)", cursor: "pointer", fontSize: 14 }}>-</button>
                 <span style={{ width: 20, textAlign: "center", fontSize: 13, fontWeight: 600 }}>{selectedMaterials[item.item] ?? 0}</span>
@@ -105,7 +105,7 @@ export function BidGeneratorPage() {
             ].map((s) => (
               <div key={s.label} style={{ textAlign: "center", padding: 8, background: "var(--psi-paper, #fff)", borderRadius: 6, border: "1px solid var(--psi-border, #e2e8f0)" }}>
                 <div style={{ fontSize: 16, fontWeight: 700, color: "var(--psi-p900, #0c4a6e)" }}>${s.value.toFixed(0)}</div>
-                <div style={{ fontSize: 10, color: "var(--psi-ink-soft, #475569)" }}>{s.label} ({s.pct}%)</div>
+                <div style={{ fontSize: 11, color: "var(--psi-ink-soft)", letterSpacing: "0.08em", textTransform: "uppercase", fontWeight: 600 }}>{s.label} · {s.pct}%</div>
               </div>
             ))}
           </div>
@@ -126,7 +126,7 @@ export function BidGeneratorPage() {
             </table>
           </details>
 
-          {result.warnings.map((w, i) => <div key={i} style={{ fontSize: 12, color: "var(--psi-warn, #d97706)", marginTop: 8 }}>⚠️ {w}</div>)}
+          {result.warnings.map((w, i) => <div key={i} role="alert" style={{ fontSize: 13, color: "var(--psi-warn)", marginTop: 8, paddingLeft: 8, borderLeft: "2px solid var(--psi-warn)" }}>{w}</div>)}
         </div>
       )}
     </div>

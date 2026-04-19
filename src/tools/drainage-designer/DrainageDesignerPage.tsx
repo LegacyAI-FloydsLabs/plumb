@@ -15,7 +15,7 @@ export function DrainageDesignerPage() {
   }, [totalFu, drainSize, totalRun, dirChanges, stories, code]);
 
   return (
-    <div className="psi-slope" style={{ maxWidth: 720 }}>
+    <div className="psi-slope" style={{ maxWidth: "none", width: "100%" }}>
       <section style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 24 }}>
         <div><label style={{ display: "block", fontSize: 13, fontWeight: 600, marginBottom: 4 }}>Total Fixture Units</label><input type="number" min={1} value={totalFu} onChange={(e) => setTotalFu(Number(e.target.value))} style={{ width: "100%", padding: 10, border: "1px solid var(--psi-input-border, #cbd5e1)", borderRadius: 6, fontSize: 14 }} /></div>
         <div><label style={{ display: "block", fontSize: 13, fontWeight: 600, marginBottom: 4 }}>Building Drain Size</label><select value={drainSize} onChange={(e) => setDrainSize(e.target.value)} style={{ width: "100%", padding: 10, border: "1px solid var(--psi-input-border, #cbd5e1)", borderRadius: 6, fontSize: 14 }}><option value="2">2"</option><option value="3">3"</option><option value="4">4"</option><option value="6">6"</option></select></div>

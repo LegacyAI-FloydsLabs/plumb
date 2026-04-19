@@ -17,7 +17,7 @@ export function BackflowTestPage() {
   }, [application, hazardDegree, pipeSize]);
 
   return (
-    <div className="psi-slope" style={{ maxWidth: 720 }}>
+    <div className="psi-slope" style={{ maxWidth: "none", width: "100%" }}>
       <section style={{ marginBottom: 24 }}>
         <div style={{ display: "flex", gap: 8, marginBottom: 12 }}>
           <input type="text" value={application} onChange={(e) => setApplication(e.target.value)} onKeyDown={(e) => e.key === "Enter" && handleSelect()} placeholder="Describe the application: irrigation, fire suppression, medical..." style={{ flex: 1, padding: 12, border: "2px solid var(--psi-input-border, #cbd5e1)", borderRadius: 8, fontSize: 16 }} />

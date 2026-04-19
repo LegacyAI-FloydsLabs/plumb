@@ -1,7 +1,9 @@
 import { useState, useCallback, useEffect } from "react";
-import { BrowserRouter, Routes, Route, NavLink, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, NavLink } from "react-router-dom";
 import { PsiChat } from "./PsiChat";
+import { HomePage } from "./HomePage";
 import { parseIntent, compute, type FlumResponse, type ToolId } from "../llm";
+import { detectLang, setLang as persistLang, t, LANG_LABELS, SUPPORTED_LANGS, type Lang } from "./i18n";
 import "./styles.css";
 
 // Tool page imports — lazy loaded in production build
@@ -18,17 +20,28 @@ import { BackflowTestPage } from "../tools/backflow-test/BackflowTestPage";
 import { BidGeneratorPage } from "../tools/bid-generator/BidGeneratorPage";
 
 const TOOLS: { id: ToolId; label: string; icon: string; value: string; description: string }[] = [
-  { id: "slope", label: "Slope Calculator", icon: "📐", value: "11.4%", description: "Sonde-and-grade lateral slope survey with code verdict" },
-  { id: "pipe_sizer", label: "Pipe Sizer", icon: "🔧", value: "10.2%", description: "All-in-one water supply, drain, and vent sizing" },
-  { id: "fixture_counter", label: "Fixture Counter", icon: "🔢", value: "10.5%", description: "DFU/WSFU counting with bathroom group reduction" },
-  { id: "code_compliance", label: "Code Compliance", icon: "📖", value: "9.8%", description: "Natural language code lookup for IPC/UPC" },
-  { id: "hydraulic_analyzer", label: "Hydraulic & Gas", icon: "💧", value: "9.5%", description: "Pressure, flow, surge, and gas pipe analysis" },
-  { id: "drainage_designer", label: "Drainage Designer", icon: "🏗️", value: "7.2%", description: "DWV system design with stack sizing and cleanouts" },
-  { id: "permit_navigator", label: "Permit Navigator", icon: "📋", value: "7.0%", description: "Permit type, fees, and document requirements" },
-  { id: "ada_compliance", label: "ADA Scanner", icon: "♿", value: "7.4%", description: "ADA clearance verification with measured input" },
-  { id: "material_spec", label: "Material Spec", icon: "🔩", value: "7.8%", description: "Material compatibility and BOM generation" },
-  { id: "backflow_test", label: "Backflow & Test", icon: "🔄", value: "7.3%", description: "Assembly selection, installation, and test logging" },
-  { id: "bid_generator", label: "Bid Generator", icon: "💰", value: "10.5%", description: "Smart bid with material takeoff and labor estimation" },
+  { id: "slope", label: "Slope Reader", icon: "SL", value: "11.4%",
+    description: "Tells you exactly where the belly is. Sonde, laser rod, math — all in one place." },
+  { id: "pipe_sizer", label: "Pipe Sizer", icon: "PS", value: "10.2%",
+    description: "The right size, first try. Supply, drain, and vent — with no table lookup." },
+  { id: "fixture_counter", label: "Fixture Counter", icon: "FX", value: "10.5%",
+    description: "DFUs and WSFUs without the code-book page flip. Bathroom group reduction included." },
+  { id: "code_compliance", label: "Code Book", icon: "CB", value: "9.8%",
+    description: "IPC and UPC answers in your hand. Free forever. No subscription, no login." },
+  { id: "hydraulic_analyzer", label: "Pressure Reader", icon: "PR", value: "9.5%",
+    description: "Pressure, flow, surge, and gas. Every answer on site, every time." },
+  { id: "drainage_designer", label: "Drain Layout", icon: "DR", value: "7.2%",
+    description: "Stacks, cleanouts, vents — laid out right the first time." },
+  { id: "permit_navigator", label: "Permit Finder", icon: "PM", value: "7.0%",
+    description: "Which permit, which fee, which form. By jurisdiction, before you dig." },
+  { id: "ada_compliance", label: "Clearance Check", icon: "CL", value: "7.4%",
+    description: "ADA clearances verified on the spot. No surprises from the inspector." },
+  { id: "material_spec", label: "Material Match", icon: "MT", value: "7.8%",
+    description: "Copper to PVC. PEX to brass. Transitions, takeoffs, and BOMs — with no guessing." },
+  { id: "backflow_test", label: "Backflow Log", icon: "BK", value: "7.3%",
+    description: "Pick the assembly. Test it right. File the log on the spot." },
+  { id: "bid_generator", label: "Bid Writer", icon: "BD", value: "10.5%",
+    description: "A complete bid in under a minute. Materials and labor priced in." },
 ];
 
 export function App() {
@@ -39,12 +52,24 @@ export function App() {
   });
   const [navOpen, setNavOpen] = useState(false);
   const [lastResponse, setLastResponse] = useState<FlumResponse | null>(null);
+  const [lang, setLangState] = useState<Lang>(() => detectLang());
 
   useEffect(() => {
     document.documentElement.classList.toggle("psi-app--dark", isDark);
     document.documentElement.classList.toggle("psi-app--light", !isDark);
     localStorage.setItem("psi-app-theme", isDark ? "dark" : "light");
   }, [isDark]);
+
+  useEffect(() => {
+    persistLang(lang);
+  }, [lang]);
+
+  const cycleLang = useCallback(() => {
+    setLangState((prev) => {
+      const idx = SUPPORTED_LANGS.indexOf(prev);
+      return SUPPORTED_LANGS[(idx + 1) % SUPPORTED_LANGS.length];
+    });
+  }, []);
 
   const handleIntent = useCallback(async (intent: { rawInput: string; tool: ToolId }) => {
     const parsed = parseIntent(intent.rawInput);
@@ -73,16 +98,27 @@ export function App() {
             {navOpen ? "✕" : "☰"}
           </button>
           <NavLink to="/" className="psi-app__header-logo">
-            <img src={`${import.meta.env.BASE_URL}hero-legacy.jpg`} alt="PSI" style={{ height: 28, borderRadius: 4 }} />
-            <span className="psi-app__header-title">PSI Field Suite</span>
+            <img src={`${import.meta.env.BASE_URL}hero-legacy.jpg`} alt="" aria-hidden="true" />
+            <span className="psi-app__header-title">
+              Plumb
+              <span className="psi-app__header-sub">{t("header.sub", lang)}</span>
+            </span>
           </NavLink>
           <div className="psi-app__header-actions">
+            <button
+              className="psi-app__theme-toggle"
+              onClick={cycleLang}
+              aria-label={`Language: ${LANG_LABELS[lang]}`}
+              title="Change language"
+            >
+              {LANG_LABELS[lang]}
+            </button>
             <button
               className="psi-app__theme-toggle"
               onClick={() => setIsDark(!isDark)}
               aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
             >
-              {isDark ? "☀️" : "🌙"}
+              {isDark ? t("action.light", lang) : t("action.dark", lang)}
             </button>
           </div>
         </header>
@@ -111,9 +147,8 @@ export function App() {
                   }
                   onClick={() => setNavOpen(false)}
                 >
-                  <span className="psi-app__nav-icon">{tool.icon}</span>
-                  {tool.label}
-                  <span className="psi-app__nav-value">{tool.value}</span>
+                  <span className="psi-app__nav-icon" aria-hidden="true">{tool.icon}</span>
+                  <span>{t(`tool.${tool.id}`, lang)}</span>
                 </NavLink>
               </li>
             ))}
@@ -122,26 +157,86 @@ export function App() {
 
         <main className="psi-app__main" id="psi-app-content">
           <Routes>
-            <Route path="/" element={<Navigate to="/slope" replace />} />
-            <Route path="/slope" element={<ToolPage toolId="slope" onIntent={handleIntent} />} />
-            <Route path="/pipe_sizer" element={<ToolPage toolId="pipe_sizer" onIntent={handleIntent} />} />
-            <Route path="/fixture_counter" element={<ToolPage toolId="fixture_counter" onIntent={handleIntent} />} />
-            <Route path="/code_compliance" element={<ToolPage toolId="code_compliance" onIntent={handleIntent} />} />
-            <Route path="/hydraulic_analyzer" element={<ToolPage toolId="hydraulic_analyzer" onIntent={handleIntent} />} />
-            <Route path="/drainage_designer" element={<ToolPage toolId="drainage_designer" onIntent={handleIntent} />} />
-            <Route path="/permit_navigator" element={<ToolPage toolId="permit_navigator" onIntent={handleIntent} />} />
-            <Route path="/ada_compliance" element={<ToolPage toolId="ada_compliance" onIntent={handleIntent} />} />
-            <Route path="/material_spec" element={<ToolPage toolId="material_spec" onIntent={handleIntent} />} />
-            <Route path="/backflow_test" element={<ToolPage toolId="backflow_test" onIntent={handleIntent} />} />
-            <Route path="/bid_generator" element={<ToolPage toolId="bid_generator" onIntent={handleIntent} />} />
+            <Route path="/" element={<HomePage lang={lang} tools={TOOLS} />} />
+            <Route path="/slope" element={<ToolPage toolId="slope" onIntent={handleIntent} lang={lang} />} />
+            <Route path="/pipe_sizer" element={<ToolPage toolId="pipe_sizer" onIntent={handleIntent} lang={lang} />} />
+            <Route path="/fixture_counter" element={<ToolPage toolId="fixture_counter" onIntent={handleIntent} lang={lang} />} />
+            <Route path="/code_compliance" element={<ToolPage toolId="code_compliance" onIntent={handleIntent} lang={lang} />} />
+            <Route path="/hydraulic_analyzer" element={<ToolPage toolId="hydraulic_analyzer" onIntent={handleIntent} lang={lang} />} />
+            <Route path="/drainage_designer" element={<ToolPage toolId="drainage_designer" onIntent={handleIntent} lang={lang} />} />
+            <Route path="/permit_navigator" element={<ToolPage toolId="permit_navigator" onIntent={handleIntent} lang={lang} />} />
+            <Route path="/ada_compliance" element={<ToolPage toolId="ada_compliance" onIntent={handleIntent} lang={lang} />} />
+            <Route path="/material_spec" element={<ToolPage toolId="material_spec" onIntent={handleIntent} lang={lang} />} />
+            <Route path="/backflow_test" element={<ToolPage toolId="backflow_test" onIntent={handleIntent} lang={lang} />} />
+            <Route path="/bid_generator" element={<ToolPage toolId="bid_generator" onIntent={handleIntent} lang={lang} />} />
           </Routes>
 
           {lastResponse && (
             <FlumResultCard response={lastResponse} onDismiss={() => setLastResponse(null)} />
           )}
         </main>
+
+        <AppFooter />
       </div>
     </BrowserRouter>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Footer — the signature on the gift. Appears on every route.
+// ---------------------------------------------------------------------------
+
+function AppFooter() {
+  return (
+    <footer className="psi-app__footer" role="contentinfo">
+      <div className="psi-app__footer-inner">
+        <div className="psi-app__footer-brand">
+          <span className="psi-app__label">Plumb</span>
+          <p className="psi-app__footer-tagline">
+            Free tools for the plumbing trade. Offline. No login. No account.
+            Nothing leaves your phone unless you send it.
+          </p>
+        </div>
+
+        <div className="psi-app__footer-col">
+          <span className="psi-app__label">License</span>
+          <a
+            href="https://www.gnu.org/licenses/agpl-3.0.en.html"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="psi-app__footer-link"
+          >
+            AGPL-3.0-or-later
+          </a>
+          <span className="psi-app__footer-note">
+            Open source. Nobody can close it and sell it back.
+          </span>
+        </div>
+
+        <div className="psi-app__footer-col">
+          <span className="psi-app__label">Made by</span>
+          <a
+            href="https://legacyai.space"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="psi-app__footer-link"
+          >
+            Legacy AI
+          </a>
+          <span className="psi-app__footer-note">
+            AI agents for small businesses. This one is on the house.
+          </span>
+        </div>
+      </div>
+
+      <div className="psi-app__footer-sign">
+        <span>— Douglas</span>
+        <span aria-hidden="true" className="psi-app__footer-dot">·</span>
+        <a href="https://legacyai.space" target="_blank" rel="noopener noreferrer">
+          legacyai.space
+        </a>
+      </div>
+    </footer>
   );
 }
 
@@ -152,22 +247,27 @@ export function App() {
 interface ToolPageProps {
   toolId: ToolId;
   onIntent: (intent: { rawInput: string; tool: ToolId }) => void;
+  lang: Lang;
 }
 
-function ToolPage({ toolId, onIntent }: ToolPageProps) {
-  const tool = TOOLS.find((t) => t.id === toolId);
+function ToolPage({ toolId, onIntent, lang }: ToolPageProps) {
+  const tool = TOOLS.find((x) => x.id === toolId);
   if (!tool) return <div>Tool not found</div>;
+  const label = t(`tool.${toolId}`, lang);
 
   // Fully implemented tools with form UI
   if (toolId === "slope") {
     return (
       <div>
         <div className="psi-app__section">
-          <h2 className="psi-app__section-title">{tool.icon} {tool.label}</h2>
-          <p style={{ fontSize: 14, color: "var(--psi-ink-soft)", margin: "0 0 16px 0" }}>
-            {tool.description} · <strong>Value: {tool.value}</strong> of standard day
+          <h2 className="psi-app__section-title">{label}</h2>
+          <p>
+            {tool.description}
+            {" · "}
+            <span className="psi-app__numeric">{tool.value}</span>
+            <span className="psi-app__label" style={{ marginLeft: 6 }}>of day</span>
           </p>
-          <PsiChat onIntent={onIntent} toolId={toolId} autoFocus />
+          <PsiChat onIntent={onIntent} toolId={toolId} autoFocus lang={lang} />
         </div>
         <SlopeCalculator
           initialJobId=""
@@ -182,11 +282,14 @@ function ToolPage({ toolId, onIntent }: ToolPageProps) {
     return (
       <div>
         <div className="psi-app__section">
-          <h2 className="psi-app__section-title">{tool.icon} {tool.label}</h2>
-          <p style={{ fontSize: 14, color: "var(--psi-ink-soft)", margin: "0 0 16px 0" }}>
-            {tool.description} · <strong>Value: {tool.value}</strong> of standard day
+          <h2 className="psi-app__section-title">{label}</h2>
+          <p>
+            {tool.description}
+            {" · "}
+            <span className="psi-app__numeric">{tool.value}</span>
+            <span className="psi-app__label" style={{ marginLeft: 6 }}>of day</span>
           </p>
-          <PsiChat onIntent={onIntent} toolId={toolId} autoFocus />
+          <PsiChat onIntent={onIntent} toolId={toolId} autoFocus lang={lang} />
         </div>
         <PipeSizerPage />
       </div>
@@ -211,51 +314,18 @@ function ToolPage({ toolId, onIntent }: ToolPageProps) {
     return (
       <div>
         <div className="psi-app__section">
-          <h2 className="psi-app__section-title">{tool.icon} {tool.label}</h2>
-          <p style={{ fontSize: 14, color: "var(--psi-ink-soft)", margin: "0 0 16px 0" }}>
-            {tool.description}
-          </p>
-          <PsiChat onIntent={onIntent} toolId={toolId} autoFocus />
+          <h2 className="psi-app__section-title">{label}</h2>
+          <p>{tool.description}</p>
+          <PsiChat onIntent={onIntent} toolId={toolId} autoFocus lang={lang} />
         </div>
         {page}
       </div>
     );
   }
 
-  // Unknown tool fallback
-  return (
-    <div>
-      <div className="psi-app__section">
-        <h2 className="psi-app__section-title">
-          {tool.icon} {tool.label}
-        </h2>
-        <p style={{ fontSize: 14, color: "var(--psi-ink-soft)", margin: "0 0 16px 0" }}>
-          {tool.description}
-        </p>
-      </div>
-
-      <div className="psi-app__section">
-        <p style={{ fontSize: 14, color: "var(--psi-ink-soft)" }}>
-          Describe what you need in natural language. The FLUM engine will route your request to the correct calculation.
-        </p>
-        <PsiChat onIntent={onIntent} toolId={toolId} autoFocus />
-      </div>
-
-      <div className="psi-app__section" style={{
-        background: "var(--psi-surface)",
-        borderRadius: "var(--psi-radius)",
-        padding: 24,
-        textAlign: "center" as const,
-      }}>
-        <div style={{ fontSize: 48, marginBottom: 16 }}>🚧</div>
-        <h3 style={{ margin: "0 0 8px 0" }}>{tool.label} — Coming Soon</h3>
-        <p style={{ fontSize: 14, color: "var(--psi-ink-soft)", margin: "0 auto", maxWidth: 400 }}>
-          The calculation engine for this tool is being built. The natural language interface 
-          and FLUM-compliant response format are ready. Check back soon for full functionality.
-        </p>
-      </div>
-    </div>
-  );
+  // Unreachable with current TOOLS registry — every toolId has a page.
+  // Kept as a typed safety net only.
+  return null;
 }
 
 // ---------------------------------------------------------------------------
@@ -284,28 +354,26 @@ function FlumResultCard({ response, onDismiss }: FlumResultCardProps) {
 
   return (
     <div className={`psi-app__result ${statusClass}`}>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
-        <h3 className="psi-app__result-title">
-          {response.result}
-          <span className={`psi-app__confidence ${confidenceClass}`}>
-            {((response.metadata?.confidence ?? 1) * 100).toFixed(0)}% confidence
-          </span>
-        </h3>
+      <h3 className="psi-app__result-title">
+        <span style={{ flex: 1, minWidth: 0 }}>{response.result}</span>
+        <span className={`psi-app__confidence ${confidenceClass}`}>
+          {((response.metadata?.confidence ?? 1) * 100).toFixed(0)}%
+        </span>
         <button
           onClick={onDismiss}
-          style={{ background: "none", border: "none", cursor: "pointer", fontSize: 18, color: "var(--psi-ink-soft)" }}
+          className="psi-app__result-dismiss"
           aria-label="Dismiss result"
         >
-          ✕
+          ×
         </button>
-      </div>
+      </h3>
 
       {response.hint && (
-        <div className="psi-app__result-hint">💡 {response.hint}</div>
+        <div className="psi-app__result-hint">{response.hint}</div>
       )}
 
       {response.tip && (
-        <div className="psi-app__result-tip">💡 {response.tip}</div>
+        <div className="psi-app__result-tip">{response.tip}</div>
       )}
 
       {response.actions_available.length > 0 && (
@@ -317,8 +385,8 @@ function FlumResultCard({ response, onDismiss }: FlumResultCardProps) {
       )}
 
       {response.metadata?.requires_human_confirmation && (
-        <div style={{ fontSize: 13, color: "var(--psi-warn)", marginTop: 8 }}>
-          ⚠️ Low confidence — please verify measurements manually before proceeding.
+        <div className="psi-app__result-warn">
+          Low confidence — verify measurements manually before proceeding.
         </div>
       )}
     </div>

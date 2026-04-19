@@ -20,7 +20,7 @@ export function HydraulicAnalyzerPage() {
   }, [material, pipeSize, lengthFt, flowGpm, staticPressure, elevationRise, fittingsCount]);
 
   return (
-    <div className="psi-slope" style={{ maxWidth: 720 }}>
+    <div className="psi-slope" style={{ maxWidth: "none", width: "100%" }}>
       <section style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 24 }}>
         <div>
           <label style={{ display: "block", fontSize: 13, fontWeight: 600, marginBottom: 4 }}>Material (C-factor: {C_FACTOR[material] ?? 130})</label>

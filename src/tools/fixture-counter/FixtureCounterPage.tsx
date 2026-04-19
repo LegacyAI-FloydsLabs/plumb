@@ -22,7 +22,7 @@ export function FixtureCounterPage() {
   }, [fixtures, bathroomGroups, occupancy, code]);
 
   return (
-    <div className="psi-slope" style={{ maxWidth: 720 }}>
+    <div className="psi-slope" style={{ maxWidth: "none", width: "100%" }}>
       <section style={{ marginBottom: 24 }}>
         <h2 className="psi-slope__section-title" style={{ fontSize: 14 }}>Fixtures</h2>
         <p className="psi-slope__hint" style={{ marginBottom: 12 }}>

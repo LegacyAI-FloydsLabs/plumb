@@ -21,7 +21,7 @@ export function AdaCompliancePage() {
   }, [measurements]);
 
   return (
-    <div className="psi-slope" style={{ maxWidth: 720 }}>
+    <div className="psi-slope" style={{ maxWidth: "none", width: "100%" }}>
       <section style={{ marginBottom: 24 }}>
         <p className="psi-slope__hint" style={{ marginBottom: 12 }}>Enter measured values for the ADA checks you want to verify. Leave blank to skip.</p>
         <div style={{ display: "grid", gap: 8 }}>

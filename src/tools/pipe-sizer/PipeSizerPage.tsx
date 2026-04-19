@@ -52,7 +52,7 @@ export function PipeSizerPage() {
   const canCompute = input.wsfu > 0 || input.dfu > 0;
 
   return (
-    <div className="psi-slope" style={{ maxWidth: 720 }}>
+    <div className="psi-slope" style={{ maxWidth: "none", width: "100%" }}>
       {/* ── Input Section ─────────────────────────────────────────── */}
       <section className="psi-slope__section" style={{ marginBottom: 24 }}>
         <h2 className="psi-slope__section-title" style={{ fontSize: 14 }}>

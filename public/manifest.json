@@ -1,17 +1,21 @@
 {
-  "name": "PSI Slope Calculator",
-  "short_name": "PSI Slope",
-  "description": "Field-tech tool for sonde-and-grade slope surveys",
+  "name": "Plumb — A Legacy AI field tool",
+  "short_name": "Plumb",
+  "description": "Free tools for the plumbing trade. Offline. In your pocket.",
   "start_url": "/",
+  "scope": "/",
   "display": "standalone",
-  "background_color": "#0f172a",
-  "theme_color": "#0369a1",
+  "background_color": "#0a0a0d",
+  "theme_color": "#0a0a0d",
+  "orientation": "any",
+  "categories": ["utilities", "productivity"],
+  "lang": "en",
   "icons": [
     {
       "src": "/hero-legacy.jpg",
-      "sizes": "1214x470",
+      "sizes": "512x512",
       "type": "image/jpeg",
-      "purpose": "any"
+      "purpose": "any maskable"
     }
   ]
 }

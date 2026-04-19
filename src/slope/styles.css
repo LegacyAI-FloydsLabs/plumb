@@ -21,32 +21,37 @@
 /* ── Light theme (default) ─────────────────────────────────────────────── */
 
 .psi-slope {
-  --psi-p900: #0c4a6e;
-  --psi-p800: #075985;
-  --psi-p700: #0369a1;
-  --psi-p600: #0284c7;
-  --psi-p500: #0ea5e9;
-  --psi-p300: #7dd3fc;
-  --psi-p200: #bae6fd;
-  --psi-p100: #e0f2fe;
-  --psi-accent: #f97316;
-  --psi-accent-soft: #fed7aa;
-  --psi-ink: #0f172a;
-  --psi-ink-soft: #475569;
-  --psi-paper: #ffffff;
-  --psi-paper-tint: #f8fafc;
-  --psi-good: #15803d;
-  --psi-good-bg: #dcfce7;
-  --psi-warn: #b45309;
-  --psi-warn-bg: #fef3c7;
-  --psi-bad: #b91c1c;
-  --psi-bad-bg: #fee2e2;
-  --psi-grid: #e2e8f0;
-  --psi-input-bg: #ffffff;
-  --psi-input-border: var(--psi-p200);
+  /* Brand scale — warm amber, stable across themes.
+   * Same values as the shell's --psi-p* scale. Used as backgrounds that
+   * need to stay dark in both modes (grand-total banner, etc). */
+  --psi-p900: oklch(28% 0.09 55);
+  --psi-p800: oklch(36% 0.11 55);
+  --psi-p700: oklch(45% 0.14 55);
+  --psi-p600: oklch(55% 0.16 55);
+  --psi-p500: oklch(62% 0.17 55);
+  --psi-p300: oklch(78% 0.12 55);
+  --psi-p200: oklch(85% 0.08 55);
+  --psi-p100: oklch(92% 0.04 55);
+  --psi-accent: oklch(62% 0.17 55);
+  --psi-accent-soft: oklch(92% 0.06 75);
+  /* Theme-aware text/surface */
+  --psi-ink: oklch(20% 0.006 250);
+  --psi-ink-soft: oklch(38% 0.006 250);
+  --psi-paper: oklch(100% 0 0);
+  --psi-paper-tint: oklch(97.5% 0.003 85);
+  --psi-good: oklch(46% 0.14 148);
+  --psi-good-bg: oklch(94% 0.04 148);
+  --psi-warn: oklch(50% 0.16 70);
+  --psi-warn-bg: oklch(95% 0.06 80);
+  --psi-bad: oklch(48% 0.21 25);
+  --psi-bad-bg: oklch(94% 0.05 25);
+  --psi-grid: oklch(87% 0.004 85);
+  --psi-input-bg: oklch(100% 0 0);
+  --psi-input-border: oklch(76% 0.006 85);
   --psi-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
 
-  font-family: "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
+  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", "Inter", Roboto, sans-serif;
   color: var(--psi-ink);
   background: var(--psi-paper-tint);
   min-height: 100%;
@@ -66,59 +71,90 @@
 /* ── Dark theme (manual class override) ─────────────────────────────────── */
 
 .psi-slope--dark {
-  --psi-p900: #7dd3fc;
-  --psi-p800: #38bdf8;
-  --psi-p700: #0ea5e9;
-  --psi-p600: #0284c7;
-  --psi-p500: #38bdf8;
-  --psi-p300: #0369a1;
-  --psi-p200: #164e63;
-  --psi-p100: #1e293b;
-  --psi-accent: #fb923c;
-  --psi-accent-soft: #7c2d12;
-  --psi-ink: #e2e8f0;
-  --psi-ink-soft: #94a3b8;
-  --psi-paper: #0f172a;
-  --psi-paper-tint: #0c1222;
-  --psi-good: #22c55e;
-  --psi-good-bg: #052e16;
-  --psi-warn: #fbbf24;
-  --psi-warn-bg: #422006;
-  --psi-bad: #fca5a5;
-  --psi-bad-bg: #450a0a;
-  --psi-grid: #1e293b;
-  --psi-input-bg: #1e293b;
-  --psi-input-border: #334155;
+  /* Brand scale stays stable (warm amber, dark-biased) — do NOT invert */
+  --psi-p900: oklch(28% 0.09 55);
+  --psi-p800: oklch(36% 0.11 55);
+  --psi-p700: oklch(45% 0.14 55);
+  --psi-p600: oklch(55% 0.16 55);
+  --psi-p500: oklch(62% 0.17 55);
+  --psi-p300: oklch(78% 0.12 55);
+  --psi-p200: oklch(85% 0.08 55);
+  --psi-p100: oklch(92% 0.04 55);
+  --psi-accent: oklch(76% 0.16 65);
+  --psi-accent-soft: oklch(32% 0.08 55);
+  /* Theme-aware text/surface — invert */
+  --psi-ink: oklch(96% 0.004 85);
+  --psi-ink-soft: oklch(78% 0.006 85);
+  --psi-paper: oklch(23% 0.006 250);
+  --psi-paper-tint: oklch(15% 0.004 250);
+  --psi-good: oklch(74% 0.14 148);
+  --psi-good-bg: oklch(26% 0.06 148);
+  --psi-warn: oklch(82% 0.14 75);
+  --psi-warn-bg: oklch(28% 0.08 65);
+  --psi-bad: oklch(72% 0.18 25);
+  --psi-bad-bg: oklch(28% 0.09 25);
+  --psi-grid: oklch(30% 0.005 250);
+  --psi-input-bg: oklch(19% 0.005 250);
+  --psi-input-border: oklch(40% 0.006 250);
   --psi-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+}
+
+/* ── Bridge: inherit dark theme from the shell (.psi-app--dark .psi-slope) ─ */
+
+.psi-app--dark .psi-slope:not(.psi-slope--light),
+.psi-app .psi-slope--dark {
+  --psi-p900: oklch(28% 0.09 55);
+  --psi-p800: oklch(36% 0.11 55);
+  --psi-p700: oklch(45% 0.14 55);
+  --psi-p600: oklch(55% 0.16 55);
+  --psi-p500: oklch(62% 0.17 55);
+  --psi-p300: oklch(78% 0.12 55);
+  --psi-p200: oklch(85% 0.08 55);
+  --psi-p100: oklch(92% 0.04 55);
+  --psi-accent: oklch(76% 0.16 65);
+  --psi-accent-soft: oklch(32% 0.08 55);
+  --psi-ink: oklch(96% 0.004 85);
+  --psi-ink-soft: oklch(78% 0.006 85);
+  --psi-paper: oklch(23% 0.006 250);
+  --psi-paper-tint: oklch(15% 0.004 250);
+  --psi-good: oklch(74% 0.14 148);
+  --psi-good-bg: oklch(26% 0.06 148);
+  --psi-warn: oklch(82% 0.14 75);
+  --psi-warn-bg: oklch(28% 0.08 65);
+  --psi-bad: oklch(72% 0.18 25);
+  --psi-bad-bg: oklch(28% 0.09 25);
+  --psi-grid: oklch(30% 0.005 250);
+  --psi-input-bg: oklch(19% 0.005 250);
+  --psi-input-border: oklch(40% 0.006 250);
 }
 
 /* ── System dark-mode auto-switch ────────────────────────────────────────── */
 
 @media (prefers-color-scheme: dark) {
   .psi-slope:not(.psi-slope--light) {
-    --psi-p900: #7dd3fc;
-    --psi-p800: #38bdf8;
-    --psi-p700: #0ea5e9;
-    --psi-p600: #0284c7;
-    --psi-p500: #38bdf8;
-    --psi-p300: #0369a1;
-    --psi-p200: #164e63;
-    --psi-p100: #1e293b;
-    --psi-accent: #fb923c;
-    --psi-accent-soft: #7c2d12;
-    --psi-ink: #e2e8f0;
-    --psi-ink-soft: #94a3b8;
-    --psi-paper: #0f172a;
-    --psi-paper-tint: #0c1222;
-    --psi-good: #22c55e;
-    --psi-good-bg: #052e16;
-    --psi-warn: #fbbf24;
-    --psi-warn-bg: #422006;
-    --psi-bad: #fca5a5;
-    --psi-bad-bg: #450a0a;
-    --psi-grid: #1e293b;
-    --psi-input-bg: #1e293b;
-    --psi-input-border: #334155;
+    --psi-p900: oklch(28% 0.09 55);
+    --psi-p800: oklch(36% 0.11 55);
+    --psi-p700: oklch(45% 0.14 55);
+    --psi-p600: oklch(55% 0.16 55);
+    --psi-p500: oklch(62% 0.17 55);
+    --psi-p300: oklch(78% 0.12 55);
+    --psi-p200: oklch(85% 0.08 55);
+    --psi-p100: oklch(92% 0.04 55);
+    --psi-accent: oklch(76% 0.16 65);
+    --psi-accent-soft: oklch(32% 0.08 55);
+    --psi-ink: oklch(96% 0.004 85);
+    --psi-ink-soft: oklch(78% 0.006 85);
+    --psi-paper: oklch(23% 0.006 250);
+    --psi-paper-tint: oklch(15% 0.004 250);
+    --psi-good: oklch(74% 0.14 148);
+    --psi-good-bg: oklch(26% 0.06 148);
+    --psi-warn: oklch(82% 0.14 75);
+    --psi-warn-bg: oklch(28% 0.08 65);
+    --psi-bad: oklch(72% 0.18 25);
+    --psi-bad-bg: oklch(28% 0.09 25);
+    --psi-grid: oklch(30% 0.005 250);
+    --psi-input-bg: oklch(19% 0.005 250);
+    --psi-input-border: oklch(40% 0.006 250);
     --psi-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
   }
 }

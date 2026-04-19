@@ -13,7 +13,7 @@ export function PermitNavigatorPage() {
   }, [description, occupancy, projectValue]);
 
   return (
-    <div className="psi-slope" style={{ maxWidth: 720 }}>
+    <div className="psi-slope" style={{ maxWidth: "none", width: "100%" }}>
       <section style={{ marginBottom: 24 }}>
         <div style={{ display: "flex", gap: 8, marginBottom: 12 }}>
           <input type="text" value={description} onChange={(e) => setDescription(e.target.value)} onKeyDown={(e) => e.key === "Enter" && handleSearch()} placeholder="Describe the work: bathroom remodel, water heater replacement, gas line..." style={{ flex: 1, padding: 12, border: "2px solid var(--psi-input-border, #cbd5e1)", borderRadius: 8, fontSize: 16 }} />

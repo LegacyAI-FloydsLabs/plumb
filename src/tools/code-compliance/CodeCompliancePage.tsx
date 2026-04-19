@@ -16,7 +16,7 @@ export function CodeCompliancePage() {
   }, [query, code, category]);
 
   return (
-    <div className="psi-slope" style={{ maxWidth: 720 }}>
+    <div className="psi-slope" style={{ maxWidth: "none", width: "100%" }}>
       <section style={{ marginBottom: 24 }}>
         <div style={{ display: "flex", gap: 8, marginBottom: 12 }}>
           <input
