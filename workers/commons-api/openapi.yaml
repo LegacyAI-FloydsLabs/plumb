@@ -1,0 +1,319 @@
+openapi: 3.1.0
+info:
+  title: Plumb Trade Commons API
+  version: 1.0.0
+  description: |
+    Free, rate-limited, zero-auth HTTP API exposing the Plumb field tool calculation engines.
+    No API key required. No account. No logs of call content.
+
+    Rate limit: 60 requests/minute per IP.
+
+    All responses return the FLUM Standard 000 envelope.
+  license:
+    name: AGPL-3.0-or-later
+    url: https://www.gnu.org/licenses/agpl-3.0.en.html
+
+servers:
+  - url: https://commons.plumb.tools/api/v1
+    description: Production
+  - url: https://commons.plumb.tools/api/v1/staging
+    description: Staging
+
+paths:
+  /slope:
+    post:
+      operationId: computeSlope
+      summary: Slope Reader — pipe slope and belly calculation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SlopeInput"
+      responses:
+        "200":
+          description: FLUM envelope
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FlumEnvelope"
+
+  /pipe-sizer:
+    post:
+      operationId: computePipeSizer
+      summary: Pipe Sizer — water supply, drain, and vent sizing
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PipeSizerInput"
+      responses:
+        "200":
+          description: FLUM envelope
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FlumEnvelope"
+
+  /fixture-counter:
+    post:
+      operationId: countFixtures
+      summary: Fixture Counter — DFU and WSFU counts
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FixtureCounterInput"
+      responses:
+        "200":
+          description: FLUM envelope
+
+  /code-compliance:
+    post:
+      operationId: lookupCode
+      summary: Code Book — IPC/UPC section lookup
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CodeComplianceInput"
+      responses:
+        "200":
+          description: FLUM envelope
+
+  /hydraulic-analyzer:
+    post:
+      operationId: analyzeHydraulics
+      summary: Pressure Reader — pressure, flow, and hydraulic analysis
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/HydraulicAnalyzerInput"
+      responses:
+        "200":
+          description: FLUM envelope
+
+  /drainage-designer:
+    post:
+      operationId: designDrainage
+      summary: Drain Layout — stacks, vents, and cleanouts
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DrainageDesignerInput"
+      responses:
+        "200":
+          description: FLUM envelope
+
+  /permit-navigator:
+    post:
+      operationId: navigatePermit
+      summary: Permit Finder — permit type and fee lookup
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PermitNavigatorInput"
+      responses:
+        "200":
+          description: FLUM envelope
+
+  /ada-compliance:
+    post:
+      operationId: checkAdaCompliance
+      summary: Clearance Check — ADA clearance verification
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AdaComplianceInput"
+      responses:
+        "200":
+          description: FLUM envelope
+
+  /material-spec:
+    post:
+      operationId: checkMaterial
+      summary: Material Match — material compatibility and BOM
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MaterialSpecInput"
+      responses:
+        "200":
+          description: FLUM envelope
+
+  /backflow-test:
+    post:
+      operationId: selectBackflowAssembly
+      summary: Backflow Log — assembly selection and test logging
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BackflowTestInput"
+      responses:
+        "200":
+          description: FLUM envelope
+
+  /bid-generator:
+    post:
+      operationId: generateBid
+      summary: Bid Writer — complete bid generation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BidGeneratorInput"
+      responses:
+        "200":
+          description: FLUM envelope
+
+components:
+  schemas:
+    FlumEnvelope:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [success, failure, pending]
+        result:
+          type: string
+        hint:
+          type: string
+        tip:
+          type: string
+        actions_available:
+          type: array
+          items:
+            type: string
+        metadata:
+          type: object
+          properties:
+            confidence:
+              type: number
+              minimum: 0
+              maximum: 1
+            requires_human_confirmation:
+              type: boolean
+
+    SlopeInput:
+      type: object
+      properties:
+        stations:
+          type: array
+          items:
+            type: object
+            properties:
+              station: { type: number }
+              distance: { type: number }
+              invert: { type: number }
+        pipe_diameter_in: { type: number }
+        units: { type: string, enum: [imperial, metric] }
+        lang: { type: string, enum: [en, es], default: en }
+
+    PipeSizerInput:
+      type: object
+      properties:
+        wsfu: { type: number }
+        dfu: { type: number }
+        vent_fu: { type: number }
+        longest_run_ft: { type: number }
+        elevation_rise_ft: { type: number }
+        code: { type: string, enum: [ipc-2021, upc-2021] }
+        stories: { type: number }
+        available_pressure_psi: { type: number }
+        lang: { type: string, enum: [en, es], default: en }
+
+    FixtureCounterInput:
+      type: object
+      properties:
+        fixtures:
+          type: array
+          items:
+            type: object
+            properties:
+              type: { type: string }
+              count: { type: number }
+        building_class: { type: string, enum: [residential, commercial, industrial] }
+        lang: { type: string, enum: [en, es], default: en }
+
+    CodeComplianceInput:
+      type: object
+      properties:
+        jurisdiction: { type: string }
+        section: { type: string }
+        query: { type: string }
+        lang: { type: string, enum: [en, es], default: en }
+
+    HydraulicAnalyzerInput:
+      type: object
+      properties:
+        pipe_diameter_in: { type: number }
+        material: { type: string }
+        length_ft: { type: number }
+        flow_rate_gpm: { type: number }
+        inlet_pressure_psi: { type: number }
+        lang: { type: string, enum: [en, es], default: en }
+
+    DrainageDesignerInput:
+      type: object
+      properties:
+        floors: { type: number }
+        fixtures_per_floor: { type: number }
+        building_class: { type: string }
+        lang: { type: string, enum: [en, es], default: en }
+
+    PermitNavigatorInput:
+      type: object
+      properties:
+        project_type: { type: string }
+        jurisdiction: { type: string }
+        scope: { type: string }
+        lang: { type: string, enum: [en, es], default: en }
+
+    AdaComplianceInput:
+      type: object
+      properties:
+        fixture_type: { type: string }
+        mounting_height_in: { type: number }
+        side_clearance_in: { type: number }
+        lang: { type: string, enum: [en, es], default: en }
+
+    MaterialSpecInput:
+      type: object
+      properties:
+        from_material: { type: string }
+        to_material: { type: string }
+        application: { type: string }
+        lang: { type: string, enum: [en, es], default: en }
+
+    BackflowTestInput:
+      type: object
+      properties:
+        assembly_type: { type: string }
+        size_in: { type: number }
+        test_pressure_psi: { type: number }
+        lang: { type: string, enum: [en, es], default: en }
+
+    BidGeneratorInput:
+      type: object
+      properties:
+        project_type: { type: string }
+        scope: { type: string }
+        fixtures: { type: array, items: { type: string } }
+        labor_rate: { type: number }
+        lang: { type: string, enum: [en, es], default: en }

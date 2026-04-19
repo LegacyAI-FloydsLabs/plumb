@@ -1,0 +1,16 @@
+{
+  "name": "plumb-commons-api",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Plumb Trade Commons API — free, rate-limited, zero-auth HTTP API for Plumb calc engines",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "build": "tsc"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20241205.0",
+    "wrangler": "^3.97.0",
+    "typescript": "^5.6.3"
+  }
+}

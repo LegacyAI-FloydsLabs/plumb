@@ -1,0 +1,10 @@
+name = "plumb-commons-api"
+main = "src/index.ts"
+compatibility_date = "2024-12-01"
+compatibility_flags = ["nodejs_compat"]
+
+[vars]
+ENVIRONMENT = "production"
+
+# Rate limiting via in-memory Map (Worker tier)
+# For production at scale: swap to Cloudflare KV
