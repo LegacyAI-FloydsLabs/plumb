@@ -62,7 +62,7 @@ No account. No tracking. Nothing leaves your phone unless you send it.
 ## Run locally
 
 ```bash
-git clone https://github.com/legacyai/plumb.git
+git clone https://github.com/LegacyAI-FloydsLabs/plumb.git
 cd plumb
 npm install
 npm run dev

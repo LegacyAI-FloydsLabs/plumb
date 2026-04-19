@@ -14,12 +14,13 @@
 | 2026-04-18T12:35:00Z | FLOYD v4.6 | Full integration: App shell, FLUM pipe-sizer, PipeSizerPage, sensors wired |
 | 2026-04-18T17:25:33Z | FLOYD v4.6 | U4 committed (e800c78): shared constants, magic number replacement |
 | 2026-04-18T17:28:24Z | FLOYD v4.6 | U5 committed (0d68f1d): dead code sweep — 195 lines removed |
+| 2026-04-19T10:45:00Z | FLOYD v4.6 | Governance alignment: port 17449 claimed, CI fixed, extract bugs repaired, docs aligned, pushed to LegacyAI-FloydsLabs/plumb |
 
 ## PROJECT STATUS
 
 - **Build**: ✅ PASSING (~101 KB gzipped total, tsc strict clean)
 - **Tests**: ✅ 167/167 pass (12 test files across all tools + entity extraction)
-- **Git**: 23 commits on `main`
+- **Git**: 24 commits on `main` (pushed to github.com/LegacyAI-FloydsLabs/plumb)
 - **Quality Gate**: ✅ CLOSED — all 5 eval-gated units complete
 - **Governance**: ✅ v1.3.0 compliant (CLAUDE.md, SSOT/, Issues/ initialized)
 
@@ -59,7 +60,7 @@ src/
 │   ├── flum.ts                 → FLUM orchestration (One Door In)
 │   │                             compute() → 11 tool handlers
 │   │                             parseIntent() → keyword → tool routing
-│   │                             sensor confidence blending in metadata
+│   │                             sensor source type definitions (no runtime sensor integration)
 │   └── index.ts                → Public re-exports (compute, parseIntent, types)
 ├── slope/                      → ✅ Calc + UI + tests
 │   ├── SlopeCalculator.tsx     → Form UI + SVG profile chart
@@ -78,7 +79,7 @@ src/
 │   ├── backflow-test/          → ✅ Calc + UI + tests
 │   └── bid-generator/          → ✅ Calc + UI + tests
 └── sensors/
-    └── index.ts                → SensorSource type (for FLUM confidence scoring)
+    └── index.ts                → SensorSource type only (adapter not yet implemented)
 ```
 
 ## ARCHITECTURE
