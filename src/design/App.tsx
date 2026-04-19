@@ -186,6 +186,14 @@ export function App() {
 // ---------------------------------------------------------------------------
 
 function AppFooter() {
+  const advisorySeats = [
+    { title: 'Master plumber', filled: false },
+    { title: 'Trade-school instructor', filled: false },
+    { title: 'Code official', filled: false },
+    { title: 'Journeyman, non-native-English-speaking', filled: false },
+    { title: 'Youth apprentice', filled: false },
+  ];
+
   return (
     <footer className="psi-app__footer" role="contentinfo">
       <div className="psi-app__footer-inner">
@@ -228,6 +236,32 @@ function AppFooter() {
         </div>
       </div>
 
+      <div className="psi-app__footer-seats">
+        <span className="psi-app__label">Advisory seats</span>
+        <p className="psi-app__footer-seats-intro">
+          Five seats. Held by the trade, not by the project.
+        </p>
+        <ul className="psi-app__footer-seats-list">
+          {advisorySeats.map((seat) => (
+            <li key={seat.title} className="psi-app__footer-seat">
+              <span className="psi-app__footer-seat-title">{seat.title}</span>
+              {seat.filled ? (
+                <span className="psi-app__footer-seat-name">{seat.filled}</span>
+              ) : (
+                <a
+                  href="https://github.com/legacyai/plumb/discussions"
+                  className="psi-app__footer-link"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Seat open · apply →
+                </a>
+              )}
+            </li>
+          ))}
+        </ul>
+      </div>
+
       <div className="psi-app__footer-sign">
         <span>— Douglas</span>
         <span aria-hidden="true" className="psi-app__footer-dot">·</span>
@@ -238,6 +272,7 @@ function AppFooter() {
     </footer>
   );
 }
+
 
 // ---------------------------------------------------------------------------
 // Tool Page Wrapper — provides the FLUM chat interface for each tool

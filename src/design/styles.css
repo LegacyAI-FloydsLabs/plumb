@@ -995,10 +995,10 @@
   margin: 0 auto;
 }
 @media (min-width: 720px) {
-  .psi-app__footer-inner {
-    grid-template-columns: 1.4fr 1fr 1fr;
-    gap: var(--psi-s5);
-  }
+    .psi-app__footer-inner {
+      grid-template-columns: 1.2fr 0.9fr 0.9fr 1fr;
+      gap: var(--psi-s5);
+    }
 }
 
 .psi-app__footer-brand .psi-app__label,
@@ -1079,6 +1079,64 @@
 .psi-app__footer-dot {
   opacity: 0.5;
 }
+
+/* ── Advisory seats row ────────────────────────────────────────────────────── */
+.psi-app__footer-seats {
+  grid-column: 1 / -1;
+  border-top: 1px solid var(--psi-rail-rule);
+  padding-top: var(--psi-s5);
+  margin-top: var(--psi-s2);
+  display: flex;
+  flex-direction: column;
+  gap: var(--psi-s3);
+}
+
+.psi-app__footer-seats-intro {
+  font-size: var(--psi-type-base);
+  line-height: var(--psi-leading-snug);
+  color: var(--psi-rail-ink);
+  margin: 0;
+}
+
+.psi-app__footer-seats-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--psi-s2);
+}
+
+.psi-app__footer-seat {
+  display: flex;
+  align-items: baseline;
+  gap: var(--psi-s3);
+  flex-wrap: wrap;
+}
+
+.psi-app__footer-seat-title {
+  font-family: var(--psi-font-mono);
+  font-size: var(--psi-type-sm);
+  color: var(--psi-rail-dim);
+  min-width: 0;
+  flex: 1;
+}
+
+.psi-app__footer-seat-name {
+  font-family: var(--psi-font-mono);
+  font-size: var(--psi-type-sm);
+  color: var(--psi-rail-ink);
+}
+
+@media (min-width: 720px) {
+  .psi-app__footer-seats {
+    grid-column: auto;
+    border-top: none;
+    padding-top: 0;
+    margin-top: 0;
+  }
+}
+
 
 /* Desktop grid: footer spans full width under the nav+main */
 @media (min-width: 1024px) {
