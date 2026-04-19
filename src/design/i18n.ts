@@ -92,6 +92,19 @@ const STRINGS: Record<Lang, StringTable> = {
     "tool.material_spec": "Material Match",
     "tool.backflow_test": "Backflow Log",
     "tool.bid_generator": "Bid Writer",
+
+  "action.share": "Share",
+  "cmd.palette.heading": "Where to?",
+  "cmd.palette.placeholder": "Type a tool or a question…",
+  "cmd.palette.recent": "Recent",
+  "cmd.palette.noResults": "No tool matches. Try a shorter word.",
+  "cmd.trigger": "⌘K · Jump to a tool",
+  "cmd.trigger.mobile": "Jump to a tool",
+  "error.generic": "Couldn't run that calculation. Check the numbers and try again.",
+  "error.storage": "Couldn't save to this device. Your last calculation is still visible above.",
+  "offline.banner": "You're offline. Everything still works.",
+  "i18n.invite": "Reading this in English? You can help translate it — CONTRIBUTING.md",
+
   },
 
   es: {
