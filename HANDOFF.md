@@ -16,13 +16,15 @@
 | 2026-04-18T17:28:24Z | FLOYD v4.6 | U5 committed (0d68f1d): dead code sweep — 195 lines removed |
 | 2026-04-19T10:45:00Z | FLOYD v4.6 | Governance alignment: port 17449 claimed, CI fixed, extract bugs repaired, docs aligned, pushed to LegacyAI-FloydsLabs/plumb |
 
+| 2026-04-19T12:38:00Z | Claude | FLUM API contract integration tests (37 cases, commit 47d6fc4) — 204/204 pass |
 ## PROJECT STATUS
 
-- **Build**: ✅ PASSING (~101 KB gzipped total, tsc strict clean)
-- **Tests**: ✅ 167/167 pass (12 test files across all tools + entity extraction)
-- **Git**: 24 commits on `main` (pushed to github.com/LegacyAI-FloydsLabs/plumb)
-- **Quality Gate**: ✅ CLOSED — all 5 eval-gated units complete
-- **Governance**: ✅ v1.3.0 compliant (CLAUDE.md, SSOT/, Issues/ initialized)
+- **Build**: PASSING (~101 KB gzipped total, tsc strict clean)
+- **Tests**: 204/204 pass (13 test files — all tools + entity extraction + FLUM API contract)
+- **Git**: 28 commits on `main` (pushed to github.com/LegacyAI-FloydsLabs/plumb)
+- **Quality Gate**: CLOSED — all 5 eval-gated units complete
+- **Governance**: v1.3.0 compliant (CLAUDE.md, SSOT/, Issues/ initialized)
+- **CI**: 4/4 green (DCO, build, test, lighthouse)
 
 ## QUALITY GATE REMEDIATION
 
@@ -82,6 +84,9 @@ src/
     └── index.ts                → SensorSource type only (adapter not yet implemented)
 ```
 
+│   ├── extract.ts            → Entity extraction (fixtures, pipes, measurements)
+│   └── __tests__/
+│       └── flum-api-contract.test.ts → 37 integration tests (all 11 tools + routing)
 ## ARCHITECTURE
 
 - **Entry**: `main.tsx` → `App` (BrowserRouter with 11 tool routes)
