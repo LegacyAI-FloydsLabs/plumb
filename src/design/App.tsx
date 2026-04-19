@@ -5,8 +5,7 @@ import { HomePage } from "./HomePage";
 import { parseIntent, compute, type FlumResponse, type ToolId } from "../llm";
 import { detectLang, setLang as persistLang, t, LANG_LABELS, SUPPORTED_LANGS, type Lang } from "./i18n";
 import "./styles.css";
-
-// Tool page imports — lazy loaded in production build
+import "./home.css";
 import { SlopeCalculator } from "../slope";
 import { PipeSizerPage } from "../tools/pipe-sizer/PipeSizerPage";
 import { FixtureCounterPage } from "../tools/fixture-counter/FixtureCounterPage";
