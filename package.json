@@ -17,9 +17,9 @@
     "url": "https://legacyai.space"
   },
   "scripts": {
-    "dev": "vite --port 17448",
+    "dev": "vite --port 17449",
     "build": "tsc -b && vite build",
-    "preview": "vite preview --port 17448",
+    "preview": "vite preview --port 17449",
     "test": "vitest run",
     "test:watch": "vitest"
   },

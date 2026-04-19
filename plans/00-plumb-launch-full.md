@@ -46,7 +46,7 @@ These never move. If a work package conflicts with one of these, the work packag
 
 **Project paths:**
 - Working dir: `/Volumes/Storage/PSI/tools/slope-calculator`
-- Dev server port: **17448** (Legacy AI port-allocation policy; do not bind 3000/5173/8080/8000)
+- Dev server port: **17449** (Legacy AI port-allocation policy; do not bind 3000/5173/8080/8000)
 - Tool code: `src/tools/<tool-id>/`
 - Slope module: `src/slope/` (drop-in-portable — has its own scoped styles)
 - Shell: `src/design/` (App.tsx, HomePage.tsx, PsiChat.tsx, styles.css, home.css, i18n.ts)

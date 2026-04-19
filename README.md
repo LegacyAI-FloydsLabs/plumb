@@ -68,7 +68,7 @@ npm install
 npm run dev
 ```
 
-Open `http://localhost:17448`.
+Open `http://localhost:17449`.
 
 ---
 

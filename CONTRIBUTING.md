@@ -136,7 +136,7 @@ All tokens come from `src/design/styles.css` — no hex literals in tool TSX fil
 git clone https://github.com/legacyai/plumb.git
 cd plumb
 npm install
-npm run dev       # dev server on port 17448
+npm run dev       # dev server on port 17449
 npm test          # unit tests
 npm run build     # production build
 ```

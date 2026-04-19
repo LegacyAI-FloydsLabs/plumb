@@ -17,10 +17,11 @@
 
 ## PROJECT STATUS
 
-- **Build**: ✅ PASSING (88 KB gzipped, tsc strict clean)
-- **Tests**: ✅ 83/83 pass (11 test files across all tools)
-- **Git**: 12 commits on `main`
+- **Build**: ✅ PASSING (~101 KB gzipped total, tsc strict clean)
+- **Tests**: ✅ 167/167 pass (12 test files across all tools + entity extraction)
+- **Git**: 23 commits on `main`
 - **Quality Gate**: ✅ CLOSED — all 5 eval-gated units complete
+- **Governance**: ✅ v1.3.0 compliant (CLAUDE.md, SSOT/, Issues/ initialized)
 
 ## QUALITY GATE REMEDIATION
 

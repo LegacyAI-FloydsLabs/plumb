@@ -1,0 +1,20 @@
+{
+  "ci": {
+    "collect": {
+      "numberOfRuns": 1,
+      "startServerCommand": "npx serve dist -p 17449 -s",
+      "url": ["http://localhost:17449/"]
+    },
+    "assert": {
+      "assertMatrix": [
+        {
+          "matchingUrl": "http://localhost:17449/",
+          "budgetFile": "./lighthouse-budget.json"
+        }
+      ]
+    },
+    "upload": {
+      "target": "temporary-public-storage"
+    }
+  }
+}
