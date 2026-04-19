@@ -2,6 +2,7 @@ import { useState, useCallback, useEffect } from "react";
 import { BrowserRouter, Routes, Route, NavLink, Navigate } from "react-router-dom";
 import { PsiChat } from "./PsiChat";
 import { parseIntent, compute, type FlumResponse, type ToolId } from "../llm";
+import "./styles.css";
 
 // Tool page imports — lazy loaded in production build
 import { SlopeCalculator } from "../slope";
