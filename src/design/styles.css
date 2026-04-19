@@ -1176,3 +1176,18 @@
   color: var(--psi-ink-dim);
   line-height: var(--psi-leading-normal);
 }
+
+/* ── Offline banner ─────────────────────────────────────────────────────── */
+.psi-app__offline-banner {
+  background: var(--psi-accent);
+  color: oklch(15% 0.01 50);
+  padding: var(--psi-s3) var(--psi-s5);
+  font-family: var(--psi-font-mono);
+  font-size: var(--psi-type-sm);
+  letter-spacing: var(--psi-track-tight);
+  text-align: center;
+  position: sticky;
+  top: 56px;
+  z-index: 100;
+  animation: psi-reveal var(--psi-motion-quick) var(--psi-ease-out);
+}

@@ -52,6 +52,7 @@ export function App() {
   const [navOpen, setNavOpen] = useState(false);
   const [lastResponse, setLastResponse] = useState<FlumResponse | null>(null);
   const [lang, setLangState] = useState<Lang>(() => detectLang());
+  const [isOffline, setIsOffline] = useState(false);
 
   useEffect(() => {
     document.documentElement.classList.toggle("psi-app--dark", isDark);
@@ -62,6 +63,18 @@ export function App() {
   useEffect(() => {
     persistLang(lang);
   }, [lang]);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const goOnline = () => setIsOffline(false);
+    const goOffline = () => setIsOffline(true);
+    window.addEventListener('online', goOnline);
+    window.addEventListener('offline', goOffline);
+    return () => {
+      window.removeEventListener('online', goOnline);
+      window.removeEventListener('offline', goOffline);
+    };
+  }, []);
 
   const cycleLang = useCallback(() => {
     setLangState((prev) => {
@@ -85,6 +98,13 @@ export function App() {
       <div className={`psi-app ${isDark ? "psi-app--dark" : "psi-app--light"}`}>
         <a href="#psi-app-content" className="psi-app__skip-link">
           Skip to main content
+
+    {isOffline && (
+      <div role="status" aria-live="polite" className="psi-app__offline-banner">
+        {t('offline.banner', lang)}
+      </div>
+    )}
+
         </a>
 
         <header className="psi-app__header">
