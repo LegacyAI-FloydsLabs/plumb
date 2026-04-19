@@ -6,6 +6,7 @@ import { parseIntent, compute, type FlumResponse, type ToolId } from "../llm";
 import { detectLang, setLang as persistLang, t, LANG_LABELS, SUPPORTED_LANGS, type Lang } from "./i18n";
 import "./styles.css";
 import "./home.css";
+import "./tool.css";
 import { SlopeCalculator } from "../slope";
 import { PipeSizerPage } from "../tools/pipe-sizer/PipeSizerPage";
 import { FixtureCounterPage } from "../tools/fixture-counter/FixtureCounterPage";

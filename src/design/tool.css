@@ -1,0 +1,440 @@
+/* ==========================================================================
+   Plumb Tool Design System — Shared CSS Class Layer
+   Maps to --psi-* custom properties in styles.css for full light/dark theming.
+   ========================================================================== */
+
+/* ====== Tool Shell ====== */
+.psi-tool {
+  padding: 20px;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+/* ====== Sections ====== */
+.psi-tool__section {
+  margin-bottom: 20px;
+}
+
+.psi-tool__section-label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 4px;
+  color: var(--psi-ink, #0f172a);
+}
+
+.psi-tool__section-desc {
+  font-size: 12px;
+  color: var(--psi-ink-soft, #475569);
+  margin-bottom: 8px;
+}
+
+/* ====== Inputs ====== */
+.psi-input,
+.psi-select {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid var(--psi-input-border, #cbd5e1);
+  border-radius: 6px;
+  font-size: 14px;
+  font-family: inherit;
+  background: var(--psi-paper, #fff);
+  color: var(--psi-ink, #0f172a);
+  box-sizing: border-box;
+  -webkit-appearance: none;
+  appearance: none;
+  transition: border-color 0.15s;
+}
+
+.psi-input:focus,
+.psi-select:focus {
+  outline: none;
+  border-color: var(--psi-accent, #0ea5e9);
+  box-shadow: 0 0 0 2px rgba(14, 165, 233, 0.15);
+}
+
+.psi-select {
+  padding: 8px;
+  font-size: 13px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23475569' d='M6 8L2 4h8z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  padding-right: 32px;
+  cursor: pointer;
+}
+
+.psi-label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 4px;
+  color: var(--psi-ink, #0f172a);
+}
+
+/* ====== Result Area ====== */
+.psi-result {
+  border: 1px solid var(--psi-border, #e2e8f0);
+  border-radius: 10px;
+  padding: 20px;
+  background: var(--psi-surface, #f8fafc);
+}
+
+.psi-result__badge {
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  font-weight: 700;
+  font-size: 16px;
+  text-align: center;
+}
+
+.psi-result__badge--good {
+  background: var(--psi-good-bg, #f0fdf4);
+  color: var(--psi-good, #16a34a);
+}
+
+.psi-result__badge--warn {
+  background: var(--psi-warn-bg, #fffbeb);
+  color: var(--psi-warn, #d97706);
+}
+
+.psi-result__badge--bad {
+  background: var(--psi-bad-bg, #fef2f2);
+  color: var(--psi-bad, #dc2626);
+}
+
+.psi-result__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 12px;
+  border-radius: 6px;
+  background: var(--psi-surface, #f8fafc);
+  margin-bottom: 4px;
+}
+
+.psi-result__label {
+  font-size: 13px;
+  color: var(--psi-ink, #0f172a);
+}
+
+.psi-result__value {
+  font-size: 13px;
+  font-family: ui-monospace, monospace;
+  font-variant-numeric: tabular-nums;
+  color: var(--psi-ink, #0f172a);
+}
+
+.psi-result__inset {
+  padding: 8px 12px;
+  background: var(--psi-paper, #fff);
+  border-radius: 6px;
+  margin-bottom: 12px;
+  border-left: 3px solid var(--psi-accent, #0ea5e9);
+  font-size: 13px;
+  color: var(--psi-ink, #0f172a);
+}
+
+.psi-result__stat {
+  text-align: center;
+  padding: 8px;
+  background: var(--psi-paper, #fff);
+  border-radius: 6px;
+  border: 1px solid var(--psi-border, #e2e8f0);
+}
+
+.psi-result__stat-value {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--psi-p900, #0c4a6e);
+}
+
+.psi-result__stat-label {
+  font-size: 11px;
+  color: var(--psi-ink-soft, #475569);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+/* ====== Table ====== */
+.psi-table {
+  width: 100%;
+  font-size: 12px;
+  margin-top: 8px;
+  border-collapse: collapse;
+}
+
+.psi-table__row {
+  border-bottom: 1px solid var(--psi-border, #e2e8f0);
+}
+
+.psi-table__cell {
+  padding: 4px;
+}
+
+.psi-table__cell--center {
+  padding: 4px;
+  text-align: center;
+}
+
+/* ====== Warnings ====== */
+.psi-warn-text {
+  font-size: 12px;
+  color: var(--psi-warn, #d97706);
+  margin-top: 8px;
+}
+
+.psi-code-ref {
+  font-size: 11px;
+  color: var(--psi-ink-soft, #475569);
+}
+
+/* ====== Buttons ====== */
+.psi-btn-group {
+  display: flex;
+  flex: 1;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.psi-btn {
+  padding: 8px 16px;
+  border-radius: 6px;
+  border: 1px solid var(--psi-border, #e2e8f0);
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  font-family: inherit;
+  background: var(--psi-paper, #fff);
+  color: var(--psi-ink, #0f172a);
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.psi-btn:hover {
+  background: var(--psi-surface, #f8fafc);
+}
+
+.psi-btn--accent {
+  background: var(--psi-accent, #0ea5e9);
+  color: #fff;
+  border-color: var(--psi-accent, #0ea5e9);
+  font-weight: 600;
+}
+
+.psi-btn--accent:hover {
+  background: #0284c7;
+}
+
+.psi-btn--outline {
+  background: transparent;
+  color: var(--psi-ink, #0f172a);
+}
+
+.psi-btn--icon {
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  border-radius: 4px;
+}
+
+/* ====== Task / Project selection buttons ====== */
+.psi-task-btn {
+  flex: 1;
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid var(--psi-border, #e2e8f0);
+  background: var(--psi-paper, #fff);
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 400;
+  font-family: inherit;
+  color: inherit;
+  text-align: center;
+  white-space: nowrap;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.psi-task-btn:hover {
+  border-color: var(--psi-accent, #0ea5e9);
+}
+
+.psi-task-btn--selected {
+  border: 2px solid var(--psi-accent, #0ea5e9);
+  background: var(--psi-p100, #dbeafe);
+  font-weight: 600;
+}
+
+/* ====== Mono utilities ====== */
+.psi-mono {
+  font-family: ui-monospace, monospace;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ====== Dark mode ====== */
+@media (prefers-color-scheme: dark) {
+  .psi-tool {
+    color: var(--psi-ink, #f1f5f9);
+  }
+
+  .psi-tool__section-label,
+  .psi-tool__section-label {
+    color: var(--psi-ink, #f1f5f9);
+  }
+
+  .psi-tool__section-desc,
+  .psi-code-ref {
+    color: #94a3b8;
+  }
+
+  .psi-input,
+  .psi-select {
+    background: var(--psi-paper, #0f172a);
+    color: var(--psi-ink, #f1f5f9);
+    border-color: #334155;
+  }
+
+  .psi-input:focus,
+  .psi-select:focus {
+    border-color: #0ea5e9;
+    box-shadow: 0 0 0 2px rgba(14, 165, 233, 0.2);
+  }
+
+  .psi-label {
+    color: var(--psi-ink, #f1f5f9);
+  }
+
+  .psi-result {
+    background: #1e293b;
+    border-color: #334155;
+  }
+
+  .psi-result__row {
+    background: #1e293b;
+  }
+
+  .psi-result__label {
+    color: #f1f5f9;
+  }
+
+  .psi-result__value {
+    color: #f1f5f9;
+  }
+
+  .psi-result__inset {
+    background: #0f172a;
+    border-left-color: #0ea5e9;
+    color: #f1f5f9;
+  }
+
+  .psi-result__stat {
+    background: #0f172a;
+    border-color: #334155;
+  }
+
+  .psi-result__stat-value {
+    color: #38bdf8;
+  }
+
+  .psi-result__stat-label {
+    color: #94a3b8;
+  }
+
+  .psi-table__row {
+    border-bottom-color: #334155;
+  }
+
+  .psi-btn {
+    background: #1e293b;
+    border-color: #334155;
+    color: #f1f5f9;
+  }
+
+  .psi-btn:hover {
+    background: #0f172a;
+  }
+
+  .psi-btn--accent {
+    background: #0ea5e9;
+  }
+
+  .psi-task-btn {
+    background: #1e293b;
+    border-color: #334155;
+    color: #f1f5f9;
+  }
+
+  .psi-task-btn:hover {
+    border-color: #0ea5e9;
+  }
+
+  .psi-task-btn--selected {
+    background: #1e3a5f;
+    border-color: #0ea5e9;
+  }
+
+  .psi-warn-text {
+    color: #fbbf24;
+  }
+
+  .psi-result__badge--good {
+    background: #052e16;
+    color: #4ade80;
+  }
+
+  .psi-result__badge--warn {
+    background: #1c1400;
+    color: #fbbf24;
+  }
+
+  .psi-result__badge--bad {
+    background: #2d0a0a;
+    color: #f87171;
+  }
+}
+
+/* ====== Print ====== */
+@media print {
+  .psi-tool {
+    padding: 0;
+    max-width: none;
+  }
+
+  .psi-btn,
+  .psi-btn-group,
+  .psi-task-btn {
+    display: none;
+  }
+
+  .psi-warn-text {
+    color: #333;
+  }
+
+  .psi-result__badge--good {
+    background: #e6ffe6;
+    color: #1a6e1a;
+  }
+
+  .psi-result__badge--bad {
+    background: #ffe6e6;
+    color: #991b1b;
+  }
+
+  .psi-result__badge--warn {
+    background: #fffacc;
+    color: #92600a;
+  }
+
+  .psi-result {
+    border-color: #ccc;
+    background: #fff;
+  }
+
+  .psi-result__inset {
+    background: #f9f9f9;
+  }
+}
