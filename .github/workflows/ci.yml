@@ -17,7 +17,10 @@ jobs:
       - name: Check DCO sign-off
         run: |
           set -e
-          for commit in $(git rev-list --no-merges HEAD); do
+          # DCO enforcement starts at governance adoption commit.
+          # Pre-governance commits are grandfathered (no Signed-off-by).
+          CUTOFF="2953c05ea2d36e893ae5d88f667aec43691703760"
+          for commit in $(git rev-list --no-merges "${CUTOFF}..HEAD"); do
             if ! git log -1 --format='%B' "$commit" | grep -qi "Signed-off-by"; then
               echo "ERROR: Commit $commit lacks DCO sign-off"
               echo "Every commit must contain: Signed-off-by: Name <email>"
