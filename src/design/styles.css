@@ -511,6 +511,7 @@
 /* ── Main content column ─────────────────────────────────────────────────── */
 .psi-app__main {
   flex: 1;
+  min-height: 0;
   padding: var(--psi-s5) var(--psi-s4) var(--psi-s8);
   max-width: 1200px;
   margin: 0 auto;
@@ -982,7 +983,8 @@
 .psi-app__footer {
   background: var(--psi-rail);
   color: var(--psi-rail-ink);
-  padding: var(--psi-s7) var(--psi-s5) var(--psi-s5);
+  padding: var(--psi-s7) var(--psi-s5) var(--psi-s7);
+  padding-bottom: calc(var(--psi-s7) + env(safe-area-inset-bottom, 0px));
   border-top: 1px solid var(--psi-rail-rule);
   margin-top: auto;
 }
