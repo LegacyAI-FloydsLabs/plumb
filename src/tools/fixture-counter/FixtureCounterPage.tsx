@@ -63,7 +63,7 @@ export function FixtureCounterPage() {
         </div>
       </section>
 
-      <button className="psi-tool__btn psi-slope__btn--primary" onClick={handleCompute} disabled={Object.keys(fixtures).length === 0 && bathroomGroups === 0}>
+      <button className="psi-btn psi-btn--accent" onClick={handleCompute} disabled={Object.keys(fixtures).length === 0 && bathroomGroups === 0}>
         Count Fixtures
       </button>
 

@@ -21,7 +21,7 @@ export function BackflowTestPage() {
       <section>
         <div>
           <input type="text" value={application} onChange={(e) => setApplication(e.target.value)} onKeyDown={(e) => e.key === "Enter" && handleSelect()} placeholder="Describe the application: irrigation, fire suppression, medical..." />
-          <button className="psi-tool__btn psi-slope__btn--primary" onClick={handleSelect}>Select</button>
+          <button className="psi-btn psi-btn--accent" onClick={handleSelect}>Select</button>
         </div>
         <div>
           <select value={hazardDegree} onChange={(e) => setHazardDegree(e.target.value as typeof hazardDegree)}>

@@ -25,7 +25,7 @@ export function DrainageDesignerPage() {
         <div><label>Code</label><select value={code} onChange={(e) => setCode(e.target.value as typeof code)}><option value="ipc-2021">IPC 2021</option><option value="upc-2021">UPC 2021</option></select></div>
       </section>
 
-      <button className="psi-tool__btn psi-slope__btn--primary" onClick={handleCompute}>Design Drainage</button>
+      <button className="psi-btn psi-btn--accent" onClick={handleCompute}>Design Drainage</button>
 
       {result && (
         <div aria-live="polite">

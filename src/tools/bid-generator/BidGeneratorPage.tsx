@@ -85,7 +85,7 @@ export function BidGeneratorPage() {
         <div><label>Permit Fees ($)</label><input type="number" min={0} placeholder="0" value={permitFees} onChange={(e) => setPermitFees(e.target.value ? Number(e.target.value) : "")} /></div>
       </section>
 
-      <button className="psi-tool__btn psi-slope__btn--primary" onClick={handleCompute} disabled={Object.keys(selectedMaterials).length === 0 && selectedTasks.size === 0}>
+      <button className="psi-btn psi-btn--accent" onClick={handleCompute} disabled={Object.keys(selectedMaterials).length === 0 && selectedTasks.size === 0}>
         Generate Bid
       </button>
 

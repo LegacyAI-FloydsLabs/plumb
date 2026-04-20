@@ -138,7 +138,7 @@ export function PipeSizerPage() {
 
       {/* ── Compute Button ────────────────────────────────────────── */}
       <button
-        className="psi-tool__btn psi-slope__btn--primary"
+        className="psi-btn psi-btn--accent"
         disabled={!canCompute}
         onClick={handleCompute}
       >

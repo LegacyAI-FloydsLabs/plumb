@@ -17,7 +17,7 @@ export function PermitNavigatorPage() {
       <section>
         <div>
           <input type="text" value={description} onChange={(e) => setDescription(e.target.value)} onKeyDown={(e) => e.key === "Enter" && handleSearch()} placeholder="Describe the work: bathroom remodel, water heater replacement, gas line..." />
-          <button className="psi-tool__btn psi-slope__btn--primary" onClick={handleSearch}>Find Permits</button>
+          <button className="psi-btn psi-btn--accent" onClick={handleSearch}>Find Permits</button>
         </div>
         <div>
           <select value={occupancy} onChange={(e) => setOccupancy(e.target.value as typeof occupancy)}>

@@ -31,7 +31,7 @@ export function MaterialSpecPage() {
         <div><label>Joint Count (for BOM)</label><input type="number" min={0} placeholder="e.g. 5" value={jointCount} onChange={(e) => setJointCount(e.target.value ? Number(e.target.value) : "")} /></div>
       </section>
 
-      <button className="psi-tool__btn psi-slope__btn--primary" onClick={handleCheck}>Check Compatibility</button>
+      <button className="psi-btn psi-btn--accent" onClick={handleCheck}>Check Compatibility</button>
 
       {result && (
         <div aria-live="polite">

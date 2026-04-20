@@ -41,7 +41,7 @@ export function HydraulicAnalyzerPage() {
         <div><label>Fittings Count</label><input type="number" min={0} value={fittingsCount} onChange={(e) => setFittingsCount(Number(e.target.value))} /></div>
       </section>
 
-      <button className="psi-tool__btn psi-slope__btn--primary" onClick={handleCompute}>Analyze</button>
+      <button className="psi-btn psi-btn--accent" onClick={handleCompute}>Analyze</button>
 
       {result && (
         <div aria-live="polite">

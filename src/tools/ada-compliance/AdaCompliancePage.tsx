@@ -42,7 +42,7 @@ export function AdaCompliancePage() {
         </div>
       </section>
 
-      <button className="psi-tool__btn psi-slope__btn--primary" onClick={handleCompute} disabled={Object.keys(measurements).length === 0}>
+      <button className="psi-btn psi-btn--accent" onClick={handleCompute} disabled={Object.keys(measurements).length === 0}>
         Check Compliance
       </button>
 
