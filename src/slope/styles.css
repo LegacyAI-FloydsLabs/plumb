@@ -53,7 +53,7 @@
   font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
     "Segoe UI", "Inter", Roboto, sans-serif;
   color: var(--psi-ink);
-  background: var(--psi-paper-tint);
+  background: var(--psi-field);
   min-height: 100%;
   padding: clamp(12px, 3vw, 32px);
   box-sizing: border-box;
@@ -65,183 +65,18 @@
 .psi-slope *::before,
 .psi-slope *::after {
   box-sizing: border-box;
-  transition: background-color 0.2s, color 0.2s, border-color 0.2s;
 }
 
-/* ── Dark theme (manual class override) ─────────────────────────────────── */
-
-.psi-slope--dark {
-  /* Brand scale stays stable (warm amber, dark-biased) — do NOT invert */
-  --psi-p900: oklch(28% 0.09 55);
-  --psi-p800: oklch(36% 0.11 55);
-  --psi-p700: oklch(45% 0.14 55);
-  --psi-p600: oklch(55% 0.16 55);
-  --psi-p500: oklch(62% 0.17 55);
-  --psi-p300: oklch(78% 0.12 55);
-  --psi-p200: oklch(85% 0.08 55);
-  --psi-p100: oklch(92% 0.04 55);
-  --psi-accent: oklch(76% 0.16 65);
-  --psi-accent-soft: oklch(32% 0.08 55);
-  /* Theme-aware text/surface — invert */
-  --psi-ink: oklch(96% 0.004 85);
-  --psi-ink-soft: oklch(78% 0.006 85);
-  --psi-paper: oklch(23% 0.006 250);
-  --psi-paper-tint: oklch(15% 0.004 250);
-  --psi-good: oklch(74% 0.14 148);
-  --psi-good-bg: oklch(26% 0.06 148);
-  --psi-warn: oklch(82% 0.14 75);
-  --psi-warn-bg: oklch(28% 0.08 65);
-  --psi-bad: oklch(72% 0.18 25);
-  --psi-bad-bg: oklch(28% 0.09 25);
-  --psi-grid: oklch(30% 0.005 250);
-  --psi-input-bg: oklch(19% 0.005 250);
-  --psi-input-border: oklch(40% 0.006 250);
-  --psi-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
-}
-
-/* ── Bridge: inherit dark theme from the shell (.psi-app--dark .psi-slope) ─ */
-
-.psi-app--dark .psi-slope:not(.psi-slope--light),
-.psi-app .psi-slope--dark {
-  --psi-p900: oklch(28% 0.09 55);
-  --psi-p800: oklch(36% 0.11 55);
-  --psi-p700: oklch(45% 0.14 55);
-  --psi-p600: oklch(55% 0.16 55);
-  --psi-p500: oklch(62% 0.17 55);
-  --psi-p300: oklch(78% 0.12 55);
-  --psi-p200: oklch(85% 0.08 55);
-  --psi-p100: oklch(92% 0.04 55);
-  --psi-accent: oklch(76% 0.16 65);
-  --psi-accent-soft: oklch(32% 0.08 55);
-  --psi-ink: oklch(96% 0.004 85);
-  --psi-ink-soft: oklch(78% 0.006 85);
-  --psi-paper: oklch(23% 0.006 250);
-  --psi-paper-tint: oklch(15% 0.004 250);
-  --psi-good: oklch(74% 0.14 148);
-  --psi-good-bg: oklch(26% 0.06 148);
-  --psi-warn: oklch(82% 0.14 75);
-  --psi-warn-bg: oklch(28% 0.08 65);
-  --psi-bad: oklch(72% 0.18 25);
-  --psi-bad-bg: oklch(28% 0.09 25);
-  --psi-grid: oklch(30% 0.005 250);
-  --psi-input-bg: oklch(19% 0.005 250);
-  --psi-input-border: oklch(40% 0.006 250);
-}
-
-/* ── System dark-mode auto-switch ────────────────────────────────────────── */
-
-@media (prefers-color-scheme: dark) {
-  .psi-slope:not(.psi-slope--light) {
-    --psi-p900: oklch(28% 0.09 55);
-    --psi-p800: oklch(36% 0.11 55);
-    --psi-p700: oklch(45% 0.14 55);
-    --psi-p600: oklch(55% 0.16 55);
-    --psi-p500: oklch(62% 0.17 55);
-    --psi-p300: oklch(78% 0.12 55);
-    --psi-p200: oklch(85% 0.08 55);
-    --psi-p100: oklch(92% 0.04 55);
-    --psi-accent: oklch(76% 0.16 65);
-    --psi-accent-soft: oklch(32% 0.08 55);
-    --psi-ink: oklch(96% 0.004 85);
-    --psi-ink-soft: oklch(78% 0.006 85);
-    --psi-paper: oklch(23% 0.006 250);
-    --psi-paper-tint: oklch(15% 0.004 250);
-    --psi-good: oklch(74% 0.14 148);
-    --psi-good-bg: oklch(26% 0.06 148);
-    --psi-warn: oklch(82% 0.14 75);
-    --psi-warn-bg: oklch(28% 0.08 65);
-    --psi-bad: oklch(72% 0.18 25);
-    --psi-bad-bg: oklch(28% 0.09 25);
-    --psi-grid: oklch(30% 0.005 250);
-    --psi-input-bg: oklch(19% 0.005 250);
-    --psi-input-border: oklch(40% 0.006 250);
-    --psi-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
-  }
-}
-
-/* ── Skip link (accessibility) ──────────────────────────────────────────── */
-
-.psi-slope__skip-link {
-  position: absolute;
-  left: -9999px;
-  top: 0;
-  z-index: 9999;
-  background: var(--psi-p700);
-  color: #fff;
-  padding: 8px 16px;
-  font-size: 14px;
-  font-weight: 600;
-  border-radius: 0 0 6px 6px;
-  text-decoration: none;
-}
-
-.psi-slope__skip-link:focus {
-  left: 8px;
-}
-
-/* ── Header ─────────────────────────────────────────────────────────────── */
-
-.psi-slope__header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 12px;
-  padding-bottom: 16px;
-  border-bottom: 2px solid var(--psi-p200);
-  margin-bottom: 20px;
-}
-
-.psi-slope__brand {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  flex: 1 1 auto;
-  min-width: 0;
-}
-
-.psi-slope__hero {
-  height: 48px;
-  width: auto;
-  max-width: 280px;
-  object-fit: contain;
-  border-radius: 6px;
-  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.15));
-}
-
-.psi-slope__header-actions {
+.psi-slope__toolbar {
   display: flex;
   align-items: center;
   gap: 8px;
-  flex-shrink: 0;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--psi-rule);
 }
 
-.psi-slope__theme-toggle {
-  font: inherit;
-  font-size: 16px;
-  line-height: 1;
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  border: 1px solid var(--psi-input-border);
-  background: var(--psi-paper);
-  color: var(--psi-ink);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background-color 0.15s, border-color 0.15s;
-}
-
-.psi-slope__theme-toggle:hover {
-  background: var(--psi-p100);
-  border-color: var(--psi-p500);
-}
-
-.psi-slope__theme-toggle:focus-visible {
-  outline: 3px solid var(--psi-p500);
-  outline-offset: 2px;
-}
+/* ── Dark theme (manual class override) ─────────────────────────────────── */
 
 .psi-slope__undo-redo {
   display: flex;
@@ -272,7 +107,7 @@
 }
 
 .psi-slope__meta-cell {
-  background: var(--psi-paper);
+  background: var(--psi-elevated);
   border: 1px solid var(--psi-input-border);
   border-radius: 8px;
   padding: 10px 12px;
@@ -304,7 +139,7 @@
 /* ── Sections ───────────────────────────────────────────────────────────── */
 
 .psi-slope__section {
-  background: var(--psi-paper);
+  background: var(--psi-elevated);
   border: 1px solid var(--psi-input-border);
   border-radius: 10px;
   padding: 16px;
@@ -421,7 +256,7 @@
 
 .psi-slope__btn--primary {
   background: var(--psi-p700);
-  color: var(--psi-paper);
+  color: var(--psi-elevated);
 }
 
 .psi-slope__btn--accent {
@@ -441,12 +276,11 @@
   border: 1px solid #fecaca;
 }
 
-.psi-slope--dark .psi-slope__btn--danger,
 .psi-slope__btn--danger {
   background: transparent;
   color: var(--psi-bad);
   border: 1px solid var(--psi-bad-bg);
-}
+ }
 
 .psi-slope__action-row {
   display: flex;
@@ -462,7 +296,7 @@
   border: none;
   cursor: pointer;
   font-size: 16px;
-  color: var(--psi-ink-soft);
+  color: var(--psi-ink-dim);
   padding: 4px 6px;
   border-radius: 4px;
   transition: background 0.15s, color 0.15s;
@@ -495,7 +329,7 @@
 
 .psi-slope__result-tile {
   background: var(--psi-p900);
-  color: var(--psi-paper);
+  color: var(--psi-elevated);
   border-radius: 10px;
   padding: 14px 16px;
   border-left: 4px solid var(--psi-accent);
@@ -574,7 +408,7 @@
 .psi-slope__profile {
   width: 100%;
   max-height: 200px;
-  background: var(--psi-paper-tint);
+  background: var(--psi-field);
   border-radius: 8px;
   border: 1px solid var(--psi-input-border);
 }
@@ -586,7 +420,7 @@
   justify-content: center;
   gap: 8px;
   min-height: 160px;
-  color: var(--psi-ink-soft);
+  color: var(--psi-ink-dim);
   font-size: 13px;
   text-align: center;
   padding: 24px;
@@ -618,20 +452,11 @@
 
 .psi-slope__hint {
   font-size: 12px;
-  color: var(--psi-ink-soft);
+  color: var(--psi-ink-dim);
   margin: 4px 0 12px;
 }
 
 /* ── Footer ──────────────────────────────────────────────────────────────── */
-
-.psi-slope__footer {
-  margin-top: 24px;
-  text-align: center;
-  font-size: 11px;
-  letter-spacing: 0.4px;
-  color: var(--psi-ink-soft);
-  text-transform: uppercase;
-}
 
 /* ── Error boundary ──────────────────────────────────────────────────────── */
 
@@ -648,7 +473,7 @@
 }
 
 .psi-slope__error-boundary p {
-  color: var(--psi-ink-soft);
+  color: var(--psi-ink-dim);
   margin: 0 0 16px;
   font-size: 14px;
 }
@@ -656,9 +481,7 @@
 /* ── Responsive: tablets (641–1024px) ────────────────────────────────────── */
 
 @media (max-width: 1024px) {
-  .psi-slope__hero {
-    max-width: 200px;
-  }
+  
 }
 
 /* ── Responsive: mobile (≤640px) ───────────────────────────────────────────── */
@@ -668,21 +491,11 @@
     padding: 8px;
   }
 
-  .psi-slope__header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 8px;
-  }
+  
 
-  .psi-slope__hero {
-    max-width: 180px;
-    height: 36px;
-  }
+  
 
-  .psi-slope__header-actions {
-    width: 100%;
-    justify-content: flex-end;
-  }
+  
 
   .psi-slope__meta-bar {
     grid-template-columns: 1fr 1fr;
@@ -741,10 +554,7 @@
     grid-template-columns: 1fr;
   }
 
-  .psi-slope__hero {
-    max-width: 140px;
-    height: 30px;
-  }
+  
 }
 
 /* ── Belly segment highlight in SVG chart ─────────────────────────────────── */

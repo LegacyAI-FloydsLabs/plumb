@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useReducer, useRef, useState } from "react";
+import React, { useEffect, useMemo, useReducer, useRef } from "react";
 import { computeSurvey, unitShort } from "./calc";
 import type { Station, Survey, Units } from "./types";
 import "./styles.css";
@@ -223,33 +223,6 @@ export function SlopeCalculator({
     });
   };
 
-  // Dark mode: system preference + localStorage override
-  const [isDark, setIsDark] = useState(() => {
-      try {
-          const stored = localStorage.getItem("psi-slope-theme");
-          if (stored) return stored === "dark";
-      } catch { /* SSR guard */ }
-      return typeof window !== "undefined" && window.matchMedia("(prefers-color-scheme: dark)").matches;
-  });
-
-  useEffect(() => {
-      const root = document.querySelector(".psi-slope");
-      if (root) {
-          root.classList.toggle("psi-slope--dark", isDark);
-          root.classList.toggle("psi-slope--light", !isDark);
-      }
-      try { localStorage.setItem("psi-slope-theme", isDark ? "dark" : "light"); } catch { /* ignore */ }
-  }, [isDark]);
-
-  useEffect(() => {
-      const mq = window.matchMedia("(prefers-color-scheme: dark)");
-      const handler = (e: MediaQueryListEvent) => {
-          try { if (!localStorage.getItem("psi-slope-theme")) setIsDark(e.matches); } catch { /* ignore */ }
-      };
-      mq.addEventListener("change", handler);
-      return () => mq.removeEventListener("change", handler);
-  }, []);
-
   // Keyboard shortcuts: Ctrl+Z = undo, Ctrl+Shift+Z / Ctrl+Y = redo
   useEffect(() => {
       const handler = (e: KeyboardEvent) => {
@@ -264,56 +237,36 @@ export function SlopeCalculator({
       () => result.segments.map((s, i) => s.isBelly ? i : -1).filter((i): i is number => i >= 0),
       [result.segments],
   );
-
-  const rootClass = `psi-slope${isDark ? " psi-slope--dark" : " psi-slope--light"}`;
   return (
-    <div className={rootClass} id="psi-slope-skip-target">
-      <a href="#psi-slope-skip-target" className="psi-slope__skip-link">Skip to main content</a>
-      <header className="psi-slope__header">
-        <img
-          src={`${import.meta.env.BASE_URL}hero-legacy.jpg`}
-          alt="Legacy AI — Embracing Experience, Empowering Innovation"
-          className="psi-slope__hero"
-          width={1214}
-          height={470}
-        />
-        <div className="psi-slope__header-actions">
-          <div className="psi-slope__undo-redo">
-            <button
-              className="psi-slope__icon-btn"
-              aria-label="Undo"
-              title="Undo (Ctrl+Z)"
-              disabled={!canUndo}
-              onClick={() => dispatch({ type: "undo" })}
-            >
-              ↩
-            </button>
-            <button
-              className="psi-slope__icon-btn"
-              aria-label="Redo"
-              title="Redo (Ctrl+Shift+Z)"
-              disabled={!canRedo}
-              onClick={() => dispatch({ type: "redo" })}
-            >
-              ↪
-            </button>
-          </div>
-          <button
-            className="psi-slope__theme-toggle"
-            aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
-            title={isDark ? "Switch to light mode" : "Switch to dark mode"}
-            onClick={() => setIsDark((d) => !d)}
-          >
-            {isDark ? "☀" : "☾"}
-          </button>
-          <button
-            className="psi-slope__btn psi-slope__btn--ghost"
-            onClick={() => dispatch({ type: "reset" })}
-          >
-            Reset
-          </button>
-        </div>
-      </header>
+    <div className="psi-slope" id="psi-slope-skip-target">
+    <div className="psi-slope__toolbar">
+     <div className="psi-slope__undo-redo">
+      <button
+       className="psi-slope__icon-btn"
+       aria-label="Undo"
+       title="Undo (Ctrl+Z)"
+       disabled={!canUndo}
+       onClick={() => dispatch({ type: "undo" })}
+      >
+       ↩
+      </button>
+      <button
+       className="psi-slope__icon-btn"
+       aria-label="Redo"
+       title="Redo (Ctrl+Shift+Z)"
+       disabled={!canRedo}
+       onClick={() => dispatch({ type: "redo" })}
+      >
+       ↪
+      </button>
+     </div>
+     <button
+      className="psi-slope__btn psi-slope__btn--ghost"
+      onClick={() => dispatch({ type: "reset" })}
+     >
+      Reset
+     </button>
+    </div>
 
       <div className="psi-slope__meta-bar">
         <div className="psi-slope__meta-cell">
@@ -570,10 +523,6 @@ export function SlopeCalculator({
         >
           Export survey JSON
         </button>
-      </div>
-
-      <div className="psi-slope__footer">
-        Precision Sewer Inspections · Clear · Accurate · Reliable
       </div>
     </div>
   );

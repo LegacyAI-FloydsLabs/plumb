@@ -177,7 +177,7 @@ export function App() {
 
         <main className="psi-app__main" id="psi-app-content">
           <Routes>
-            <Route path="/" element={<HomePage lang={lang} tools={TOOLS} />} />
+            <Route path="/" element={<HomePage lang={lang} />} />
             <Route path="/slope" element={<ToolPage toolId="slope" onIntent={handleIntent} lang={lang} />} />
             <Route path="/pipe_sizer" element={<ToolPage toolId="pipe_sizer" onIntent={handleIntent} lang={lang} />} />
             <Route path="/fixture_counter" element={<ToolPage toolId="fixture_counter" onIntent={handleIntent} lang={lang} />} />

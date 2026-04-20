@@ -1,16 +1,8 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 import { t, type Lang } from "./i18n";
-import type { ToolId } from "../llm";
 
 interface HomePageProps {
   lang: Lang;
-  tools: {
-    id: ToolId;
-    label: string;
-    icon: string;
-    description: string;
-  }[];
 }
 
 // Minimal BeforeInstallPromptEvent shape — the spec type isn't in lib.dom
@@ -19,7 +11,7 @@ interface InstallPromptEvent extends Event {
   userChoice: Promise<{ outcome: "accepted" | "dismissed" }>;
 }
 
-export function HomePage({ lang, tools }: HomePageProps) {
+export function HomePage({ lang }: HomePageProps) {
   const [installEvent, setInstallEvent] = useState<InstallPromptEvent | null>(null);
 
   useEffect(() => {
@@ -86,27 +78,6 @@ export function HomePage({ lang, tools }: HomePageProps) {
         </div>
       </section>
 
-      <section className="psi-home__tools" aria-labelledby="home-tools-heading">
-        <h2 id="home-tools-heading" className="psi-home__tools-heading">
-          {t("home.tools.label", lang)}
-        </h2>
-        <ul className="psi-home__tool-grid">
-          {tools.map((tool) => (
-            <li key={tool.id}>
-              <Link to={`/${tool.id}`} className="psi-home__tool-card">
-                <span className="psi-home__tool-code" aria-hidden="true">
-                  {tool.icon}
-                </span>
-                <span className="psi-home__tool-label">
-                  {t(`tool.${tool.id}`, lang)}
-                </span>
-                <span className="psi-home__tool-desc">{tool.description}</span>
-                <span className="psi-home__tool-go" aria-hidden="true">→</span>
-              </Link>
-            </li>
-          ))}
-        </ul>
-      </section>
 
       <footer className="psi-home__signoff">
         <p>{t("home.signoff", lang)}</p>

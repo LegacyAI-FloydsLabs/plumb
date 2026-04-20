@@ -16,16 +16,15 @@ export function CodeCompliancePage() {
   }, [query, code, category]);
 
   return (
-    <div className="psi-slope" style={{ maxWidth: "none", width: "100%" }}>
+    <div className="psi-tool">
       <section className="psi-tool__section">
-        <div style={{ display: "flex", gap: 8, marginBottom: 12 }}>
+        <div>
           <input
             type="text" value={query}
             onChange={(e) => { setQuery(e.target.value); setSearched(false); }}
             onKeyDown={(e) => e.key === "Enter" && handleSearch()}
             placeholder="Search: slope, vent sizing, trap arm, backflow..."
             className="psi-input"
-            style={{ flex: 1, fontSize: 16 }}
           />
           <button className="psi-btn psi-btn--accent" onClick={handleSearch}>Search</button>
         </div>
@@ -43,18 +42,18 @@ export function CodeCompliancePage() {
       </section>
 
       {searched && matches.length === 0 && (
-        <div style={{ padding: 24, textAlign: "center", color: "var(--psi-ink-soft, #475569)" }}>
+        <div>
           No results for &quot;{query}&quot;. Try broader terms: slope, vent, trap, pressure, material.
         </div>
       )}
 
       {matches.map((section, i) => (
-        <div key={i} className="psi-result" style={{ marginBottom: 12 }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 8 }}>
-            <h3 style={{ margin: 0, fontSize: 15, fontWeight: 700, color: "var(--psi-p900, #0c4a6e)" }}>{section.section}</h3>
-            <span style={{ fontSize: 11, padding: "2px 8px", borderRadius: 999, background: "var(--psi-p100, #dbeafe)", color: "var(--psi-p700, #0369a1)" }}>{section.category}</span>
+        <div key={i} className="psi-result">
+          <div>
+            <h3>{section.section}</h3>
+            <span>{section.category}</span>
           </div>
-          <h4 style={{ margin: "0 0 8px 0", fontSize: 14 }}>{section.title}</h4>
+          <h4>{section.title}</h4>
           <div className="psi-result__inset">{section.requirement}</div>
           <div className="psi-code-ref">💬 {section.plain_language}</div>
         </div>

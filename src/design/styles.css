@@ -27,45 +27,45 @@
   letter-spacing: inherit;
 }
 
-/* ── Tokens — Light (bone paper, graphite ink, amber accent) ──────────────── */
+/* ── Tokens — Light (warm ivory, espresso ink, amber accent, teal rail) ──────────────── */
 .psi-app {
-  /* Field — warm-neutral, near-zero chroma */
-  --psi-field: oklch(97.5% 0.003 85);
-  --psi-surface: oklch(99% 0.002 85);
+  /* Field — warm ivory, not cold gray. Readable in daylight, feels alive. */
+  --psi-field: oklch(97.5% 0.008 75);
+  --psi-surface: oklch(99% 0.005 75);
   --psi-elevated: oklch(100% 0 0);
-  --psi-rule: oklch(87% 0.004 85);
-  --psi-rule-strong: oklch(76% 0.006 85);
+  --psi-rule: oklch(88% 0.008 75);
+  --psi-rule-strong: oklch(78% 0.01 70);
 
-  /* Ink — graphite, cool-neutral at very low chroma.
+  /* Ink — warm espresso, not cold graphite.
    * All pass WCAG 2.2 AA body-text contrast (≥4.5:1) on field & elevated. */
-  --psi-ink: oklch(20% 0.006 250);       /* ~15:1 on field */
-  --psi-ink-dim: oklch(38% 0.006 250);   /* ~7:1 on field  */
-  --psi-ink-faint: oklch(44% 0.006 250); /* ~4.8:1 on field — AA body */
+  --psi-ink: oklch(22% 0.02 60);        /* ~14:1 on field — warm dark */
+  --psi-ink-dim: oklch(40% 0.02 60);     /* ~6.5:1 on field — warm medium */
+  --psi-ink-faint: oklch(48% 0.02 60);   /* ~4.5:1 on field — AA body, warm */
 
-  /* The one accent — engineering amber */
-  --psi-accent: oklch(62% 0.17 55);
-  --psi-accent-soft: oklch(92% 0.06 75);
-  --psi-accent-ink: oklch(36% 0.14 50);  /* ≥4.5:1 on accent-soft */
+  /* The one accent — engineering amber, punchy and confident */
+  --psi-accent: oklch(64% 0.19 55);
+  --psi-accent-soft: oklch(93% 0.07 70);
+  --psi-accent-ink: oklch(38% 0.15 50);  /* ≥4.5:1 on accent-soft */
 
-  /* States — measured, never candy. Tuned for ≥4.5:1 on field. */
-  --psi-good: oklch(46% 0.14 148);
-  --psi-good-soft: oklch(94% 0.04 148);
-  --psi-warn: oklch(50% 0.16 70);
-  --psi-warn-soft: oklch(95% 0.06 80);
-  --psi-bad: oklch(48% 0.21 25);
-  --psi-bad-soft: oklch(94% 0.05 25);
+  /* States — vivid, not muted. Still ≥4.5:1 on field. */
+  --psi-good: oklch(48% 0.16 148);
+  --psi-good-soft: oklch(94% 0.06 148);
+  --psi-warn: oklch(55% 0.18 70);
+  --psi-warn-soft: oklch(95% 0.08 80);
+  --psi-bad: oklch(50% 0.22 25);
+  --psi-bad-soft: oklch(94% 0.06 25);
 
   /* Brand scale — STABLE across themes. Never inverts. Always warm amber.
    * These are the old --psi-p* tokens that downstream tool pages reference. */
-  --psi-p50:  oklch(97% 0.018 55);
-  --psi-p100: oklch(92% 0.04 55);
-  --psi-p200: oklch(85% 0.08 55);
-  --psi-p300: oklch(78% 0.12 55);
-  --psi-p500: oklch(62% 0.17 55);
-  --psi-p600: oklch(55% 0.16 55);
-  --psi-p700: oklch(45% 0.14 55);
-  --psi-p800: oklch(36% 0.11 55);
-  --psi-p900: oklch(28% 0.09 55);
+  --psi-p50:  oklch(97% 0.025 55);
+  --psi-p100: oklch(93% 0.05 55);
+  --psi-p200: oklch(86% 0.09 55);
+  --psi-p300: oklch(78% 0.13 55);
+  --psi-p500: oklch(64% 0.19 55);
+  --psi-p600: oklch(56% 0.17 55);
+  --psi-p700: oklch(46% 0.15 55);
+  --psi-p800: oklch(37% 0.12 55);
+  --psi-p900: oklch(29% 0.10 55);
 
   /* Legacy aliases — theme-aware surfaces/ink */
   --psi-ink-soft: var(--psi-ink-dim);
@@ -80,11 +80,11 @@
   --psi-accent-hover: var(--psi-accent-ink);
   --psi-grid: var(--psi-rule);
 
-  /* Header rail — always dark */
-  --psi-rail: oklch(16% 0.004 250);
-  --psi-rail-ink: oklch(96% 0.003 85);
-  --psi-rail-dim: oklch(68% 0.005 250);
-  --psi-rail-rule: oklch(26% 0.005 250);
+  /* Header rail — rich dark teal, not cold charcoal */
+  --psi-rail: oklch(18% 0.04 240);
+  --psi-rail-ink: oklch(96% 0.01 80);
+  --psi-rail-dim: oklch(70% 0.02 200);
+  --psi-rail-rule: oklch(28% 0.04 240);
 
   /* Typography */
   --psi-font-sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
@@ -148,31 +148,31 @@
   --psi-focus: 0 0 0 2px var(--psi-field), 0 0 0 4px var(--psi-accent);
 }
 
-/* ── Tokens — Dark (graphite field, warm bone ink, same amber) ────────────── */
+/* ── Tokens — Dark (warm navy field, bone ink, same amber) ────────────── */
 .psi-app--dark {
-  /* Neutrals at very low chroma so they read as graphite, not blue-slate */
-  --psi-field: oklch(15% 0.004 250);
-  --psi-surface: oklch(19% 0.005 250);
-  --psi-elevated: oklch(23% 0.006 250);
-  --psi-rule: oklch(30% 0.005 250);
-  --psi-rule-strong: oklch(40% 0.006 250);
+  /* Neutrals with a hint of warmth so they read as rich navy, not cold slate */
+  --psi-field: oklch(15% 0.01 260);
+  --psi-surface: oklch(19% 0.012 260);
+  --psi-elevated: oklch(23% 0.014 260);
+  --psi-rule: oklch(30% 0.012 260);
+  --psi-rule-strong: oklch(40% 0.014 260);
 
   /* Ink — all pass 4.5:1 on field & elevated */
-  --psi-ink: oklch(96% 0.004 85);        /* ~18:1 on field */
-  --psi-ink-dim: oklch(78% 0.006 85);    /* ~8:1 on field  */
-  --psi-ink-faint: oklch(62% 0.006 85);  /* ~4.6:1 on field — AA body */
+  --psi-ink: oklch(96% 0.008 80);        /* ~18:1 on field — warm bone */
+  --psi-ink-dim: oklch(78% 0.01 80);     /* ~8:1 on field — warm */
+  --psi-ink-faint: oklch(62% 0.01 80);   /* ~4.6:1 on field — AA body, warm */
 
-  /* Amber lifts in L for dark-mode legibility */
-  --psi-accent: oklch(76% 0.16 65);
-  --psi-accent-soft: oklch(32% 0.08 55);
-  --psi-accent-ink: oklch(90% 0.13 70);  /* ≥4.5:1 on accent-soft */
+  /* Amber lifts in L for dark-mode legibility — punchy, not muted */
+  --psi-accent: oklch(76% 0.18 65);
+  --psi-accent-soft: oklch(32% 0.10 55);
+  --psi-accent-ink: oklch(90% 0.14 70);  /* ≥4.5:1 on accent-soft */
 
-  --psi-good: oklch(74% 0.14 148);
-  --psi-good-soft: oklch(26% 0.06 148);
-  --psi-warn: oklch(82% 0.14 75);
-  --psi-warn-soft: oklch(28% 0.08 65);
-  --psi-bad: oklch(72% 0.18 25);
-  --psi-bad-soft: oklch(28% 0.09 25);
+  --psi-good: oklch(74% 0.16 148);
+  --psi-good-soft: oklch(26% 0.08 148);
+  --psi-warn: oklch(82% 0.16 75);
+  --psi-warn-soft: oklch(28% 0.10 65);
+  --psi-bad: oklch(72% 0.20 25);
+  --psi-bad-soft: oklch(28% 0.10 25);
 
   --psi-shadow: 0 1px 0 oklch(0% 0 0 / 0.3), 0 1px 2px oklch(0% 0 0 / 0.4);
   --psi-shadow-lg: 0 1px 0 oklch(0% 0 0 / 0.3), 0 8px 24px -8px oklch(0% 0 0 / 0.5);
@@ -180,29 +180,7 @@
   --psi-focus: 0 0 0 2px var(--psi-field), 0 0 0 4px var(--psi-accent);
 }
 
-@media (prefers-color-scheme: dark) {
-  .psi-app:not(.psi-app--light) {
-    --psi-field: oklch(15% 0.004 250);
-    --psi-surface: oklch(19% 0.005 250);
-    --psi-elevated: oklch(23% 0.006 250);
-    --psi-rule: oklch(30% 0.005 250);
-    --psi-rule-strong: oklch(40% 0.006 250);
-    --psi-ink: oklch(96% 0.004 85);
-    --psi-ink-dim: oklch(78% 0.006 85);
-    --psi-ink-faint: oklch(62% 0.006 85);
-    --psi-accent: oklch(76% 0.16 65);
-    --psi-accent-soft: oklch(32% 0.08 55);
-    --psi-accent-ink: oklch(90% 0.13 70);
-    --psi-good: oklch(74% 0.14 148);
-    --psi-good-soft: oklch(26% 0.06 148);
-    --psi-warn: oklch(82% 0.14 75);
-    --psi-warn-soft: oklch(28% 0.08 65);
-    --psi-bad: oklch(72% 0.18 25);
-    --psi-bad-soft: oklch(28% 0.09 25);
-    --psi-shadow: 0 1px 0 oklch(0% 0 0 / 0.3), 0 1px 2px oklch(0% 0 0 / 0.4);
-    --psi-shadow-lg: 0 1px 0 oklch(0% 0 0 / 0.3), 0 8px 24px -8px oklch(0% 0 0 / 0.5);
-  }
-}
+
 
 /* ── Reduced motion (SC 2.3.3) ────────────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {

@@ -52,19 +52,19 @@ export function PipeSizerPage() {
   const canCompute = input.wsfu > 0 || input.dfu > 0;
 
   return (
-    <div className="psi-slope" style={{ maxWidth: "none", width: "100%" }}>
+    <div className="psi-tool">
       {/* ── Input Section ─────────────────────────────────────────── */}
-      <section className="psi-slope__section" style={{ marginBottom: 24 }}>
-        <h2 className="psi-slope__section-title" style={{ fontSize: 14 }}>
+      <section className="psi-tool__section">
+        <h2 className="psi-tool__section-title">
           Fixture Loads
         </h2>
-        <p className="psi-slope__hint" style={{ marginBottom: 12 }}>
+        <p className="psi-tool__hint">
           Enter fixture unit counts from your takeoff. WSFU = water supply,
           DFU = drainage. The engine sizes all three systems (supply, drain,
           vent) in one pass.
         </p>
 
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+        <div>
           <NumberField
             label="WSFU (Water Supply Fixture Units)"
             value={input.wsfu}
@@ -92,11 +92,11 @@ export function PipeSizerPage() {
         </div>
       </section>
 
-      <section className="psi-slope__section" style={{ marginBottom: 24 }}>
-        <h2 className="psi-slope__section-title" style={{ fontSize: 14 }}>
+      <section className="psi-tool__section">
+        <h2 className="psi-tool__section-title">
           Site Conditions
         </h2>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+        <div>
           <NumberField
             label="Longest developed run (ft)"
             value={input.longest_run_ft}
@@ -117,13 +117,6 @@ export function PipeSizerPage() {
           />
           <div>
             <label
-              style={{
-                display: "block",
-                fontSize: 13,
-                fontWeight: 600,
-                color: "var(--psi-ink-soft, #475569)",
-                marginBottom: 4,
-              }}
             >
               Code edition
             </label>
@@ -135,15 +128,6 @@ export function PipeSizerPage() {
                   e.target.value as "ipc-2021" | "upc-2021",
                 )
               }
-              style={{
-                width: "100%",
-                padding: "10px 12px",
-                border: "1px solid var(--psi-input-border, #cbd5e1)",
-                borderRadius: "var(--psi-radius, 8px)",
-                fontSize: 14,
-                background: "var(--psi-input-bg, #fff)",
-                color: "var(--psi-ink, #0f172a)",
-              }}
             >
               <option value="ipc-2021">IPC 2021</option>
               <option value="upc-2021">UPC 2021</option>
@@ -154,10 +138,9 @@ export function PipeSizerPage() {
 
       {/* ── Compute Button ────────────────────────────────────────── */}
       <button
-        className="psi-slope__btn psi-slope__btn--primary"
+        className="psi-tool__btn psi-slope__btn--primary"
         disabled={!canCompute}
         onClick={handleCompute}
-        style={{ width: "100%", marginBottom: 24, padding: "14px 0" }}
       >
         Size My Pipes
       </button>
@@ -166,14 +149,6 @@ export function PipeSizerPage() {
       {error && (
         <div
           role="alert"
-          style={{
-            background: "var(--psi-bad-bg, #fef2f2)",
-            color: "var(--psi-bad, #dc2626)",
-            padding: 16,
-            borderRadius: "var(--psi-radius, 8px)",
-            marginBottom: 24,
-            fontSize: 14,
-          }}
         >
           {error}
         </div>
@@ -221,59 +196,24 @@ function SizerResultCard({ result }: { result: PipeSizerOutput }) {
   return (
     <div
       aria-live="polite"
-      style={{
-        border: "1px solid var(--psi-border, #e2e8f0)",
-        borderRadius: "var(--psi-radius-lg, 12px)",
-        padding: 20,
-        background: "var(--psi-surface, #f8fafc)",
-      }}
     >
       <h3
-        style={{
-          fontSize: 16,
-          fontWeight: 700,
-          margin: "0 0 16px 0",
-          color: "var(--psi-ink, #0f172a)",
-        }}
       >
         Pipe Sizes
       </h3>
 
       <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(120px, 1fr))",
-          gap: 12,
-          marginBottom: 20,
-        }}
       >
         {sizes.map((s) => (
           <div
             key={s.label}
-            style={{
-              textAlign: "center",
-              padding: 16,
-              background: "var(--psi-paper, #fff)",
-              border: "1px solid var(--psi-border, #e2e8f0)",
-              borderRadius: "var(--psi-radius, 8px)",
-            }}
           >
-            <div style={{ fontSize: 24, marginBottom: 4 }}>{s.icon}</div>
+            <div>{s.icon}</div>
             <div
-              style={{
-                fontSize: 24,
-                fontWeight: 700,
-                color: "var(--psi-p900, #0c4a6e)",
-              }}
             >
               {s.size}&quot;
             </div>
             <div
-              style={{
-                fontSize: 11,
-                color: "var(--psi-ink-soft, #475569)",
-                marginTop: 2,
-              }}
             >
               {s.label}
             </div>
@@ -283,22 +223,6 @@ function SizerResultCard({ result }: { result: PipeSizerOutput }) {
 
       {/* Pressure */}
       <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: 8,
-          padding: "12px 16px",
-          borderRadius: "var(--psi-radius, 8px)",
-          marginBottom: 16,
-          background: result.pressure_ok
-            ? "var(--psi-good-bg, #f0fdf4)"
-            : "var(--psi-bad-bg, #fef2f2)",
-          color: result.pressure_ok
-            ? "var(--psi-good, #16a34a)"
-            : "var(--psi-bad, #dc2626)",
-          fontWeight: 600,
-          fontSize: 14,
-        }}
       >
         {result.pressure_ok ? "✅" : "⚠️"} Residual pressure:{" "}
         {result.residual_pressure_psi} psi
@@ -306,34 +230,20 @@ function SizerResultCard({ result }: { result: PipeSizerOutput }) {
       </div>
 
       {/* Code sections */}
-      <div style={{ fontSize: 12, color: "var(--psi-ink-soft, #475569)" }}>
+      <div>
         <strong>Code sections:</strong> {result.code_sections.join(" · ")}
       </div>
 
       {/* Warnings */}
       {result.warnings.length > 0 && (
-        <div style={{ marginTop: 16 }}>
+        <div>
           <h4
-            style={{
-              fontSize: 13,
-              fontWeight: 600,
-              margin: "0 0 8px 0",
-              color: "var(--psi-warn, #d97706)",
-            }}
           >
             ⚠️ Warnings
           </h4>
           {result.warnings.map((w, i) => (
             <div
               key={i}
-              style={{
-                fontSize: 13,
-                color: "var(--psi-ink-soft, #475569)",
-                padding: "8px 12px",
-                background: "var(--psi-warn-bg, #fffbeb)",
-                borderRadius: "var(--psi-radius, 8px)",
-                marginBottom: 4,
-              }}
             >
               {w}
             </div>
@@ -342,42 +252,21 @@ function SizerResultCard({ result }: { result: PipeSizerOutput }) {
       )}
 
       {/* Minimum branch sizes reference */}
-      <details style={{ marginTop: 16 }}>
+      <details>
         <summary
-          style={{
-            fontSize: 12,
-            color: "var(--psi-ink-soft, #475569)",
-            cursor: "pointer",
-          }}
         >
           IPC minimum fixture branch sizes
         </summary>
         <table
-          style={{
-            width: "100%",
-            fontSize: 12,
-            marginTop: 8,
-            borderCollapse: "collapse",
-          }}
         >
           <tbody>
             {Object.entries(IPC_MIN_BRANCH_SIZE).map(([fixture, size]) => (
               <tr key={fixture}>
                 <td
-                  style={{
-                    padding: "4px 8px",
-                    borderBottom: "1px solid var(--psi-border, #e2e8f0)",
-                  }}
                 >
                   {fixture.replace(/_/g, " ")}
                 </td>
                 <td
-                  style={{
-                    padding: "4px 8px",
-                    borderBottom: "1px solid var(--psi-border, #e2e8f0)",
-                    fontWeight: 600,
-                    textAlign: "right",
-                  }}
                 >
                   {size}&quot;
                 </td>
@@ -408,13 +297,6 @@ function NumberField({
   return (
     <div>
       <label
-        style={{
-          display: "block",
-          fontSize: 13,
-          fontWeight: 600,
-          color: "var(--psi-ink-soft, #475569)",
-          marginBottom: 4,
-        }}
       >
         {label}
       </label>
@@ -423,15 +305,6 @@ function NumberField({
         value={value}
         min={min}
         onChange={(e) => onChange(Number(e.target.value))}
-        style={{
-          width: "100%",
-          padding: "10px 12px",
-          border: "1px solid var(--psi-input-border, #cbd5e1)",
-          borderRadius: "var(--psi-radius, 8px)",
-          fontSize: 14,
-          background: "var(--psi-input-bg, #fff)",
-          color: "var(--psi-ink, #0f172a)",
-        }}
       />
     </div>
   );
