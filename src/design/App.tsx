@@ -255,7 +255,6 @@ function AppFooter() {
             AI agents for small businesses. This one is on the house.
           </span>
         </div>
-      </div>
 
       <div className="psi-app__footer-seats">
         <span className="psi-app__label">Advisory seats</span>
@@ -289,6 +288,7 @@ function AppFooter() {
         <a href="https://legacyai.space" target="_blank" rel="noopener noreferrer">
           legacyai.space
         </a>
+      </div>
       </div>
     </footer>
   );

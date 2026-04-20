@@ -1132,7 +1132,6 @@
 
 @media (min-width: 720px) {
   .psi-app__footer-seats {
-    grid-column: auto;
     border-top: none;
     padding-top: 0;
     margin-top: 0;
