@@ -1139,15 +1139,14 @@
 }
 
 
-/* Desktop grid: footer spans full width under the nav+main */
 @media (min-width: 1024px) {
-  .psi-app__footer {
-    grid-column: 1 / -1;
-    grid-row: 3;
-  }
-  .psi-app {
-    grid-template-rows: 56px 1fr auto;
-  }
+    .psi-app__footer {
+      grid-column: 2;
+      grid-row: 3;
+    }
+    .psi-app {
+      grid-template-rows: 56px 1fr auto;
+    }
 }
 
 /* ── Coming-soon block ────────────────────────────────────────────────────── */
