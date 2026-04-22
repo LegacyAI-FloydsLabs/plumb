@@ -158,17 +158,22 @@ function emptyResult(issues: string[]): SurveyResult {
 }
 
 /**
- * Map a numeric overall slope to a code-comparison verdict.
- * Defaults to 4" lateral thresholds when pipe diameter is unspecified.
- */
+  * Map a numeric overall slope to a code-comparison verdict.
+  * Defaults to 4" lateral thresholds when pipe diameter is unspecified.
+  *
+  * NOTE: pct may be negative (downstream invert is lower than upstream, indicating
+  * correct gravity flow). We use Math.abs() so negative slopes (correct flow
+  * direction) are evaluated the same as positive slopes.
+  */
 export function classifySlope(
   pct: number,
   opts: CalcOptions = {},
 ): SlopeVerdict {
   const dia = opts.pipeDiameterIn ?? 4;
   const minPct = CODE_MIN_PCT_BY_DIAMETER_IN[dia];
-  if (pct >= minPct) return { kind: "code_compliant", minPct };
-  if (pct >= minPct * 0.5) return { kind: "marginal", minPct };
+  const absPct = Math.abs(pct);
+  if (absPct >= minPct) return { kind: "code_compliant", minPct };
+  if (absPct >= minPct * 0.5) return { kind: "marginal", minPct };
   return { kind: "below_minimum", minPct };
 }
 
