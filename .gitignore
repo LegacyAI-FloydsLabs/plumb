@@ -33,3 +33,6 @@ target/
 vendor/
 .cache/
 tmp/
+
+# Superpowers brainstorming sessions (visual companion mockups)
+.superpowers/
